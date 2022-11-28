@@ -50,6 +50,8 @@ import { apiPostToken } from '@/plugins/api/auth'
 
 const emitter = require('tiny-emitter/instance')
 
+let textSynth
+
 export default {
   components: {
     BIconFlag
@@ -91,12 +93,29 @@ export default {
       } else {
         this.$refs.loadingModal.hide()
       }
+    },
+    speak: function (text, interruptPrev = true) {
+      if (textSynth) {
+        if (interruptPrev) {
+          textSynth.cancel()
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.rate = 1.2
+        textSynth.speak(utterance)
+      }
+    }
+  },
+  created: function () {
+    if (window.speechSynthesis) {
+      textSynth = window.speechSynthesis
     }
   },
   mounted: function () {
     loadLanguageAsync(this.storeLocale)
 
     emitter.on('show-loading', this.toggleLoading)
+    emitter.on('speak', this.speak)
 
     // TODO
     apiPostToken({
@@ -112,6 +131,7 @@ export default {
   },
   beforeDestroy: function () {
     emitter.off('show-loading', this.toggleLoading)
+    emitter.off('speak', this.speak)
   }
 }
 

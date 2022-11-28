@@ -13,6 +13,7 @@ import {
   FormPlugin,
   FormInputPlugin,
   FormGroupPlugin,
+  FormSelectPlugin,
   InputGroupPlugin,
   ImagePlugin,
   LayoutPlugin,
@@ -32,6 +33,7 @@ Vue.use(CardPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormGroupPlugin)
+Vue.use(FormSelectPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(ImagePlugin)
 Vue.use(LayoutPlugin)

@@ -18,22 +18,22 @@
       </b-input-group>
     </b-form-group>
 
-    <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="container">
+    <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="container && showPreview">
       <b-row>
         <b-col cols=12 md=6>
-          <b-card-text><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><p><b-badge>{{ container.containerTypeName }}</b-badge></p></b-card-text>
+          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><p><b-badge>{{ container.containerTypeName }}</b-badge></p></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card-text><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></b-card-text>
+          <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card-text><h5><BIconJournalAlbum /> {{ $t('widgetContainerProject') }}</h5><p>{{ container.projectName }}</p></b-card-text>
+          <b-card-text v-if="container.projectName"><h5><BIconJournalAlbum /> {{ $t('widgetContainerProject') }}</h5><p>{{ container.projectName }}</p></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card-text><h5><BIconColumnsGap /> {{ $t('widgetContainerTrial') }}</h5><p>{{ container.trialName || 'N/A' }}</p></b-card-text>
+          <b-card-text v-if="container.trialName"><h5><BIconColumnsGap /> {{ $t('widgetContainerTrial') }}</h5><p>{{ container.trialName || 'N/A' }}</p></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card-text><h5><BIconDiagram3 /> {{ $t('widgetContainerSubContainerCount') }}</h5><p>{{ (container.subContainerCount || 0).toLocaleString() }}</p></b-card-text>
+          <b-card-text v-if="container.subContainerCount !== undefined"><h5><BIconDiagram3 /> {{ $t('widgetContainerSubContainerCount') }}</h5><p>{{ (container.subContainerCount || 0).toLocaleString() }}</p></b-card-text>
         </b-col>
       </b-row>
     </b-card>
@@ -47,6 +47,8 @@ import BarcodeScannerModal from '@/components/modals/BarcodeScannerModal'
 import { apiPostContainerTable } from '@/plugins/api/container'
 import { uuidv4 } from '@/plugins/util'
 import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3 } from 'bootstrap-vue'
+
+const emitter = require('tiny-emitter/instance')
 
 export default {
   components: {
@@ -73,6 +75,10 @@ export default {
     autofocus: {
       type: Boolean,
       default: false
+    },
+    showPreview: {
+      type: Boolean,
+      default: true
     }
   },
   data: function () {
@@ -86,6 +92,9 @@ export default {
   },
   watch: {
     container: function (newValue) {
+      if (newValue) {
+        emitter.emit('speak', newValue.containerBarcode)
+      }
       this.$emit('container-selected', newValue)
     },
     barcode: function (newValue) {
@@ -111,7 +120,11 @@ export default {
         if (result && result.data && result.data.length > 0) {
           this.container = result.data[0]
         } else {
-          this.container = null
+          this.container = {
+            containerBarcode: this.barcode,
+            containerDescription: this.barcode,
+            isActive: true
+          }
         }
       })
     },
@@ -120,6 +133,10 @@ export default {
     },
     update: function () {
       this.getContainerDetails()
+    },
+    reset: function () {
+      this.barcode = null
+      this.container = null
     }
   }
 }

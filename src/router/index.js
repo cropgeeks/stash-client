@@ -11,6 +11,11 @@ const routes = [
     component: HomeView
   },
   {
+    path: '/import',
+    name: 'import',
+    component: () => import(/* webpackChunkName: "import" */ '../views/ImportView.vue')
+  },
+  {
     path: '/transfer',
     name: 'transfer',
     component: () => import(/* webpackChunkName: "transfer" */ '../views/TransferView.vue')

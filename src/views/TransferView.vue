@@ -174,7 +174,7 @@ export default {
             case 400:
               // Bad request, some parameter is missing
               this.error = {
-                text: 'pageTransferErrorMissingParameter',
+                text: 'toastErrorMissingParameter',
                 variant: 'text-danger'
               }
               break
@@ -188,7 +188,7 @@ export default {
             case 417:
               // Bad request, some parameter is missing
               this.error = {
-                text: 'pageTransferErrorIncompatibleContainerTypes',
+                text: 'toastErrorIncompatibleContainerTypes',
                 variant: 'text-danger'
               }
               break

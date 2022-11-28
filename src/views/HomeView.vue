@@ -15,6 +15,11 @@
     <section>
       <b-row>
         <b-col cols=12 md=4 class="mb-3">
+          <b-card class="h-100" :img-src="require('@/assets/img/transfer-into-stash.svg')" :title="$t('pageHomeCardImportTitle')" :sub-title="$t('pageHomeCardImportSubtitle')">
+            <router-link :to="{ name: 'import' }" class="stretched-link"></router-link>
+          </b-card>
+        </b-col>
+        <b-col cols=12 md=4 class="mb-3">
           <b-card class="h-100" :img-src="require('@/assets/img/transfer-between-stashes.svg')" :title="$t('pageHomeCardTransferTitle')" :sub-title="$t('pageHomeCardTransferSubtitle')">
             <router-link :to="{ name: 'transfer' }" class="stretched-link"></router-link>
           </b-card>
