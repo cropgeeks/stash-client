@@ -25,18 +25,13 @@
       <h3>{{ $t('pageTransferResultTitle') }}</h3>
       <p>{{ $tc('pageTransferResultText', result) }}</p>
 
-      <b-table hover striped :fields="transferFields" :items="transfers">
-      </b-table>
-
-      <b-pagination v-if="transferTotalRows > transferPerPage"
-                    v-model="transferPage"
-                    :per-page="transferPerPage"
-                    :total-rows="transferTotalRows" />
+      <ContainerTransferTable :getData="getTransferData" />
     </div>
   </div>
 </template>
 
 <script>
+import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
 import ContainerSearch from '@/components/ContainerSearch'
 import { BIconBoxArrowRight } from 'bootstrap-vue'
 
@@ -47,56 +42,17 @@ const emitter = require('tiny-emitter/instance')
 export default {
   components: {
     BIconBoxArrowRight,
-    ContainerSearch
+    ContainerSearch,
+    ContainerTransferTable
   },
   data: function () {
     return {
       containerFrom: null,
       containerTo: null,
-      result: null,
-      transfers: null,
-      transferPage: 1,
-      transferPerPage: 10,
-      transferTotalRows: 0
+      result: null
     }
   },
   computed: {
-    transferFields: function () {
-      return [{
-        key: 'containerBarcode',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogContainerBarcode')
-      }, {
-        key: 'containerDescription',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogContainerDescription')
-      }, {
-        key: 'sourceBarcode',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogSourceBarcode')
-      }, {
-        key: 'sourceDescription',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogSourceDescription')
-      }, {
-        key: 'targetBarcode',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogTargetBarcode')
-      }, {
-        key: 'targetDescription',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogTargetDescription')
-      }, {
-        key: 'userId',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogUserId')
-      }, {
-        key: 'createdOn',
-        sortable: true,
-        label: this.$t('tableColumnTransferLogCreatedOn'),
-        formatter: value => value ? new Date(value).toLocaleDateString() : null
-      }]
-    },
     error: function () {
       if (!this.containerFrom && !this.containerFrom) {
         return {
@@ -133,14 +89,10 @@ export default {
       }
     }
   },
-  watch: {
-    transferPage: function () {
-      this.updateTransferTable()
-    }
-  },
   methods: {
     setContainerFrom: function (value) {
       this.containerFrom = value
+      this.$refs.targetContainer.focus()
     },
     setContainerTo: function (value) {
       this.containerTo = value
@@ -196,10 +148,11 @@ export default {
         }
       })
     },
-    updateTransferTable: function () {
-      apiPostContainerTransferTable({
-        page: this.transferPage,
-        limit: this.transferPerPage,
+    getTransferData: function (page, limit, prevCount) {
+      return apiPostContainerTransferTable({
+        page: page,
+        limit: limit,
+        prevCount: prevCount,
         filter: [{
           column: 'sourceId',
           comparator: 'equals',
@@ -211,9 +164,6 @@ export default {
           operator: 'and',
           values: [this.containerTo.containerId]
         }]
-      }, result => {
-        this.transfers = result.data
-        this.transferTotalRows = result.count
       })
     }
   }

@@ -7,7 +7,10 @@ const apiPostProjectTable = (queryData, onSuccess, onError) => {
   return apiAxios({ url: 'project/table', method: 'POST', data: queryData, success: onSuccess, error: onError })
 }
 
+const apiPostProject = (data, onSuccess, onError) => apiAxios({ url: 'project', method: 'POST', data: data, success: onSuccess, error: onError })
+
 export {
   apiGetProjectById,
+  apiPostProject,
   apiPostProjectTable
 }

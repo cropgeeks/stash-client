@@ -2,7 +2,6 @@
   <b-modal :ok-title="$t('buttonCancel')"
            ok-variant="secondary"
            ok-only
-           no-fade
            @hide="$refs.scanner.close()"
            @shown="$refs.scanner.start()"
            ref="barcodeScannerModal">

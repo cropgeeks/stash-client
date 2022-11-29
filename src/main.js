@@ -14,6 +14,7 @@ import {
   FormInputPlugin,
   FormGroupPlugin,
   FormSelectPlugin,
+  FormTextareaPlugin,
   InputGroupPlugin,
   ImagePlugin,
   LayoutPlugin,
@@ -22,6 +23,7 @@ import {
   PaginationPlugin,
   SpinnerPlugin,
   TablePlugin,
+  TabsPlugin,
   TooltipPlugin
 } from 'bootstrap-vue'
 
@@ -34,6 +36,7 @@ Vue.use(FormPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormSelectPlugin)
+Vue.use(FormTextareaPlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(ImagePlugin)
 Vue.use(LayoutPlugin)
@@ -42,6 +45,7 @@ Vue.use(NavbarPlugin)
 Vue.use(PaginationPlugin)
 Vue.use(SpinnerPlugin)
 Vue.use(TablePlugin)
+Vue.use(TabsPlugin)
 Vue.use(TooltipPlugin)
 
 // Set base URL

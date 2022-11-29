@@ -7,7 +7,10 @@ const apiPostTrialTable = (queryData, onSuccess, onError) => {
   return apiAxios({ url: 'trial/table', method: 'POST', data: queryData, success: onSuccess, error: onError })
 }
 
+const apiPostTrial = (data, onSuccess, onError) => apiAxios({ url: 'trial', method: 'POST', data: data, success: onSuccess, error: onError })
+
 export {
   apiGetTrialById,
+  apiPostTrial,
   apiPostTrialTable
 }

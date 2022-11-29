@@ -14,17 +14,17 @@
             </svg>
           </b-button>
         </b-input-group-prepend>
-        <b-form-input :tabindex="tabIndex" :id="`container-${id}`" lazy :autofocus="autofocus" v-model="barcode" required />
+        <b-form-input ref="barcodeInput" :tabindex="tabIndex" :id="`container-${id}`" lazy :autofocus="autofocus" v-model="barcode" required />
       </b-input-group>
     </b-form-group>
 
     <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="container && showPreview">
       <b-row>
         <b-col cols=12 md=6>
-          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><p><b-badge>{{ container.containerTypeName }}</b-badge></p></b-card-text>
+          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><h5><p><b-badge>{{ container.containerTypeName }}</b-badge></p></h5></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
-          <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></b-card-text>
+          <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></h5></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
           <b-card-text v-if="container.projectName"><h5><BIconJournalAlbum /> {{ $t('widgetContainerProject') }}</h5><p>{{ container.projectName }}</p></b-card-text>
@@ -36,17 +36,26 @@
           <b-card-text v-if="container.subContainerCount !== undefined"><h5><BIconDiagram3 /> {{ $t('widgetContainerSubContainerCount') }}</h5><p>{{ (container.subContainerCount || 0).toLocaleString() }}</p></b-card-text>
         </b-col>
       </b-row>
+
+      <template #footer v-if="container && container.containerId">
+        <b-button @click="$refs.containerHistoryModal.show()"><BIconClockHistory /> {{ $t('buttonContainerTransferHistory') }}</b-button>
+        <b-button @click="$refs.containerContentModal.show()" class="ml-3" v-if="container.subContainerCount"><BIconDiagram3 /> {{ $t('buttonContainerContent') }}</b-button>
+      </template>
     </b-card>
 
     <BarcodeScannerModal ref="barcodeScannerModal" @code-scanned="codeScanned" />
+    <ContainerHistoryModal :container="container" ref="containerHistoryModal" />
+    <ContainerContentModal :container="container" ref="containerContentModal" />
   </div>
 </template>
 
 <script>
 import BarcodeScannerModal from '@/components/modals/BarcodeScannerModal'
+import ContainerHistoryModal from '@/components/modals/ContainerHistoryModal'
+import ContainerContentModal from '@/components/modals/ContainerContentModal'
 import { apiPostContainerTable } from '@/plugins/api/container'
 import { uuidv4 } from '@/plugins/util'
-import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3 } from 'bootstrap-vue'
+import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3, BIconClockHistory } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -57,7 +66,10 @@ export default {
     BIconJournalAlbum,
     BIconColumnsGap,
     BIconDiagram3,
-    BarcodeScannerModal
+    BIconClockHistory,
+    BarcodeScannerModal,
+    ContainerHistoryModal,
+    ContainerContentModal
   },
   props: {
     label: {
@@ -137,6 +149,9 @@ export default {
     reset: function () {
       this.barcode = null
       this.container = null
+    },
+    focus: function () {
+      this.$refs.barcodeInput.focus()
     }
   }
 }

@@ -9,15 +9,9 @@
           <ContainerSearch label="formLabelImportInto" description="formDescriptionImportInto" :tabIndex="1" autofocus @container-selected="setContainer" />
         </b-col>
         <b-col cols=12 md=6>
-          <b-form-group :label="$t('formLabelImportContainerType')" :description="$t('formDescriptionImportContainerType')" label-for="container-type">
-            <b-form-select :options="containerTypes" v-model="selectedContainerType" id="container-type" />
-          </b-form-group>
-          <b-form-group :label="$t('formLabelImportProject')" :description="$t('formDescriptionImportProject')" label-for="project">
-            <b-form-select :options="projects" v-model="selectedProject" id="project" />
-          </b-form-group>
-          <b-form-group :label="$t('formLabelImportTrial')" :description="$t('formDescriptionImportTrial')" label-for="trial">
-            <b-form-select :options="trials" v-model="selectedTrial" id="trial" />
-          </b-form-group>
+          <ContainerTypeSelector @container-type-selected="ct => { selectedContainerType = ct }" />
+          <ProjectSelector @project-selected="p => { selectedProject = p }" />
+          <TrialSelector @trial-selected="t => { selectedTrial = t }" :projectId="selectedProject ? selectedProject.id : null" />
         </b-col>
       </b-row>
 
@@ -39,19 +33,20 @@
             <b-button variant="danger" @click="deleteItem(data.index)"><BIconX /></b-button>
           </template>
         </b-table>
-      </div>
 
-      <b-button @click="onSubmit"><BIconUpload /> {{ $t('buttonUpload') }}</b-button>
+        <b-button @click="onSubmit" variant="primary"><BIconUpload /> {{ $t('buttonUpload') }}</b-button>
+      </div>
     </b-form>
   </div>
 </template>
 
 <script>
 import ContainerSearch from '@/components/ContainerSearch'
-import { apiPostContainerImport, apiPostContainerTypeTable } from '@/plugins/api/container'
-import { apiPostProjectTable } from '@/plugins/api/project'
-import { apiPostTrialTable } from '@/plugins/api/trial'
-import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
+import ContainerTypeSelector from '@/components/ContainerTypeSelector'
+import ProjectSelector from '@/components/ProjectSelector'
+import TrialSelector from '@/components/TrialSelector'
+import { apiPostContainerImport } from '@/plugins/api/container'
+
 import { BIconX, BIconUpload } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
@@ -60,17 +55,17 @@ export default {
   components: {
     BIconX,
     BIconUpload,
-    ContainerSearch
+    ContainerTypeSelector,
+    ContainerSearch,
+    ProjectSelector,
+    TrialSelector
   },
   data: function () {
     return {
       targetContainer: null,
-      containerTypes: [],
-      selectedContainerType: null,
       items: [],
-      projects: [],
+      selectedContainerType: null,
       selectedProject: null,
-      trials: [],
       selectedTrial: null
     }
   },
@@ -94,18 +89,30 @@ export default {
       }]
     }
   },
-  watch: {
-    selectedProject: function () {
-      this.getTrials()
-    }
-  },
   methods: {
     onSubmit: function () {
+      const showWarning = this.items.some(i => i.containerId !== undefined && i.containerId !== null)
+
+      if (showWarning) {
+        this.$bvModal.msgBoxConfirm(this.$t('modalTextImportConfirmTransfer'), {
+          title: this.$t('modalTitleImportConfirmTransfer'),
+          okTitle: this.$t('buttonYes'),
+          cancelTitle: this.$t('buttonNo')
+        }).then(value => {
+          if (value) {
+            this.importData()
+          }
+        })
+      } else {
+        this.importData()
+      }
+    },
+    importData: function () {
       apiPostContainerImport({
         parentContainerId: this.targetContainer.containerId,
         items: this.items
       }, result => {
-        console.log(result)
+        // TODO
       }, {
         codes: [400, 404],
         callback: e => {
@@ -152,6 +159,9 @@ export default {
           item.trialId = this.selectedTrial ? this.selectedTrial.id : null
           item.containerTypeId = this.selectedContainerType.id
           item.containerTypeName = this.selectedContainerType.name
+          if (item.containerId) {
+            item._rowVariant = 'warning'
+          }
           if (!this.items.find(i => i.containerBarcode === item.containerBarcode)) {
             this.items.push(item)
             this.$refs.itemSearch.reset()
@@ -161,108 +171,7 @@ export default {
           }
         }
       }
-    },
-    getContainerTypes: function () {
-      apiPostContainerTypeTable({
-        page: 1,
-        limit: MAX_JAVA_INTEGER,
-        orderBy: 'name',
-        ascending: 1
-      }, result => {
-        if (result && result.data) {
-          this.containerTypes = result.data.map(t => {
-            return {
-              text: t.name,
-              value: t
-            }
-          })
-
-          if (result.data.length > 0) {
-            this.selectedContainerType = result.data[0]
-          }
-        } else {
-          this.containerTypes = []
-        }
-      })
-    },
-    getTrials: function () {
-      apiPostTrialTable({
-        page: 1,
-        limit: MAX_JAVA_INTEGER,
-        sortBy: 'name',
-        ascending: 1,
-        filter: [{
-          column: 'projectId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.selectedProject.id]
-        }]
-      }, result => {
-        if (result && result.data) {
-          this.trials = result.data.map(t => {
-            let name = t.name
-
-            if (t.startDate || t.endDate) {
-              const dates = [t.startDate, t.endDate].map(d => d ? new Date(d).toLocaleDateString() : 'N/A')
-
-              name += ` (${dates.join(' - ')})`
-            }
-
-            return {
-              text: name,
-              value: t
-            }
-          })
-
-          if (result.data.length > 0) {
-            this.selectedTrial = result.data[0]
-          } else {
-            this.selectedTrial = null
-          }
-        } else {
-          this.trials = []
-          this.selectedTrial = null
-        }
-      })
-    },
-    getProjects: function () {
-      apiPostProjectTable({
-        page: 1,
-        limit: MAX_JAVA_INTEGER,
-        sortBy: 'name',
-        ascending: 1
-      }, result => {
-        if (result && result.data) {
-          this.projects = result.data.map(p => {
-            let name = p.name
-
-            if (p.startDate || p.endDate) {
-              const dates = [p.startDate, p.endDate].map(d => d ? new Date(d).toLocaleDateString() : 'N/A')
-
-              name += ` (${dates.join(' - ')})`
-            }
-
-            return {
-              text: name,
-              value: p
-            }
-          })
-
-          if (result.data.length > 0) {
-            this.selectedProject = result.data[0]
-          } else {
-            this.selectedProject = null
-          }
-        } else {
-          this.projects = []
-          this.selectedProject = null
-        }
-      })
     }
-  },
-  mounted: function () {
-    this.getContainerTypes()
-    this.getProjects()
   }
 }
 </script>
