@@ -13,7 +13,7 @@
           <ContainerTransferTable sortBy="createdOn" :sortDescending="true" :getData="getTransferDataSelf" />
         </b-tab>
         <b-tab :title="$t('tabsContainerHistoryChild')">
-          <ContainerTransferTable sortBy="createdOn" :sortDescending="true" :getData="getTransferDataChild" />
+          <ContainerTransferEvents :container="container" />
         </b-tab>
       </b-tabs>
     </div>
@@ -22,10 +22,12 @@
 
 <script>
 import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
+import ContainerTransferEvents from '@/components/ContainerTransferEvents'
 import { apiPostContainerTransferTable } from '@/plugins/api/container'
 
 export default {
   components: {
+    ContainerTransferEvents,
     ContainerTransferTable
   },
   props: {
@@ -49,24 +51,6 @@ export default {
           column: 'containerId',
           comparator: 'equals',
           operator: 'and',
-          values: [this.container.containerId]
-        }]
-      })
-    },
-    getTransferDataChild: function (page, limit, prevCount) {
-      return apiPostContainerTransferTable({
-        page: page,
-        limit: limit,
-        prevCount: prevCount,
-        filter: [{
-          column: 'sourceId',
-          comparator: 'equals',
-          operator: 'or',
-          values: [this.container.containerId]
-        }, {
-          column: 'targetId',
-          comparator: 'equals',
-          operator: 'or',
           values: [this.container.containerId]
         }]
       })

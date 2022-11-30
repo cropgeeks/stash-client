@@ -25,7 +25,7 @@
       <h3>{{ $t('pageTransferResultTitle') }}</h3>
       <p>{{ $tc('pageTransferResultText', result) }}</p>
 
-      <ContainerTransferTable :getData="getTransferData" />
+      <ContainerTransferTable :getData="getTransferData" ref="transferTable" />
     </div>
   </div>
 </template>
@@ -147,6 +147,9 @@ export default {
           }
         }
       })
+    },
+    updateTransferTable: function () {
+      this.$refs.transferTable()
     },
     getTransferData: function (page, limit, prevCount) {
       return apiPostContainerTransferTable({

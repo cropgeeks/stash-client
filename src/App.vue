@@ -15,6 +15,7 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <b-nav-item @click="toggleAudioFeedback"><BIconVolumeUp v-if="storeAudioFeedbackEnabled" /><BIconVolumeMute v-else /></b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
               <BIconFlag /><span> {{ $t('menuLocale') }}</span>
@@ -44,7 +45,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconFlag } from 'bootstrap-vue'
+import { BIconFlag, BIconVolumeUp, BIconVolumeMute } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { apiPostToken } from '@/plugins/api/auth'
 
@@ -54,11 +55,14 @@ let textSynth
 
 export default {
   components: {
-    BIconFlag
+    BIconFlag,
+    BIconVolumeUp,
+    BIconVolumeMute
   },
   computed: {
     ...mapGetters([
-      'storeLocale'
+      'storeLocale',
+      'storeAudioFeedbackEnabled'
     ])
   },
   data: function () {
@@ -75,6 +79,9 @@ export default {
     }
   },
   methods: {
+    toggleAudioFeedback: function () {
+      this.$store.dispatch('setAudioFeedbackEnabled', !this.storeAudioFeedbackEnabled)
+    },
     /**
      * When the locale is changed, update the i18n settings
      * @param language The newly selected locale
@@ -95,7 +102,7 @@ export default {
       }
     },
     speak: function (text, interruptPrev = true) {
-      if (textSynth) {
+      if (textSynth && this.storeAudioFeedbackEnabled) {
         if (interruptPrev) {
           textSynth.cancel()
         }
