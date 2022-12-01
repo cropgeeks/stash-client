@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="about-header bg-light p-5 mb-4 border">
+    <section class="page-header bg-light p-5 mb-4 border">
       <b-row>
         <b-col cols=12 md=4 class="text-center text-md-right" order="1" order-md="2">
           <b-img fluid src="img/stash.svg" alt="Stash logo" />
@@ -50,13 +50,4 @@ export default {
 </script>
 
 <style scoped>
-.about-header img {
-  max-height: 125px;
-}
-
-@media (min-width: 768px) {
-  .about-header img {
-    max-height: 150px;
-  }
-}
 </style>

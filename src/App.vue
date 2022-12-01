@@ -152,4 +152,14 @@ $secondary: #006266;
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import '~bootswatch/dist/pulse/bootswatch';
+
+.page-header img {
+  max-height: 125px;
+}
+
+@media (min-width: 768px) {
+  .page-header img {
+    max-height: 150px;
+  }
+}
 </style>

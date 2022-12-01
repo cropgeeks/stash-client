@@ -13,17 +13,22 @@ const routes = [
   {
     path: '/import',
     name: 'import',
-    component: () => import(/* webpackChunkName: "import" */ '../views/ImportView.vue')
+    component: () => import(/* webpackChunkName: "import" */ '@/views/ImportView')
   },
   {
     path: '/transfer',
     name: 'transfer',
-    component: () => import(/* webpackChunkName: "transfer" */ '../views/TransferView.vue')
+    component: () => import(/* webpackChunkName: "transfer" */ '@/views/TransferView')
+  },
+  {
+    path: '/predefine',
+    name: 'predefine',
+    component: () => import(/* webpackChunkName: "predefine" */ '@/views/PredefineView')
   },
   {
     path: '/about',
     name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '@/views/AboutView')
   }
 ]
 
