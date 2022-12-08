@@ -2,7 +2,8 @@
   <div>
     <b-form-group :label="$t('formLabelImportContainerType')" :description="$t('formDescriptionImportContainerType')" label-for="container-type">
       <b-input-group>
-        <b-form-select :options="containerTypes" v-model="selectedContainerType" id="container-type" />
+        <CustomDropdown :items="containerTypes" v-model="selectedContainerType" id="container-type" />
+        <!-- <b-form-select :options="containerTypes" v-model="selectedContainerType" id="container-type" /> -->
         <b-input-group-addon>
           <b-button @click="$refs.addContainerTypesModal.show()"><BIconPlusSquare /></b-button>
         </b-input-group-addon>
@@ -14,6 +15,7 @@
 </template>
 
 <script>
+import CustomDropdown from '@/components/CustomDropdown'
 import AddContainerTypeModal from '@/components/modals/AddContainerTypeModal'
 import { apiPostContainerTypeTable } from '@/plugins/api/container'
 import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
@@ -22,7 +24,8 @@ import { BIconPlusSquare } from 'bootstrap-vue'
 export default {
   components: {
     BIconPlusSquare,
-    AddContainerTypeModal
+    AddContainerTypeModal,
+    CustomDropdown
   },
   data: function () {
     return {
@@ -40,14 +43,15 @@ export default {
       apiPostContainerTypeTable({
         page: 1,
         limit: MAX_JAVA_INTEGER,
-        orderBy: 'name',
+        orderBy: 'id',
         ascending: 1
       }, result => {
         if (result && result.data) {
           this.containerTypes = result.data.map(t => {
             return {
               text: t.name,
-              value: t
+              value: t,
+              icon: t.icon
             }
           })
 

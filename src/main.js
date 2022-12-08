@@ -24,7 +24,10 @@ import {
   SpinnerPlugin,
   TablePlugin,
   TabsPlugin,
-  TooltipPlugin
+  TooltipPlugin,
+  ListGroupPlugin,
+  ToastPlugin,
+  FormFilePlugin
 } from 'bootstrap-vue'
 
 Vue.config.productionTip = false
@@ -37,15 +40,18 @@ Vue.use(FormInputPlugin)
 Vue.use(FormGroupPlugin)
 Vue.use(FormSelectPlugin)
 Vue.use(FormTextareaPlugin)
+Vue.use(FormFilePlugin)
 Vue.use(InputGroupPlugin)
 Vue.use(ImagePlugin)
 Vue.use(LayoutPlugin)
+Vue.use(ListGroupPlugin)
 Vue.use(ModalPlugin)
 Vue.use(NavbarPlugin)
 Vue.use(PaginationPlugin)
 Vue.use(SpinnerPlugin)
 Vue.use(TablePlugin)
 Vue.use(TabsPlugin)
+Vue.use(ToastPlugin)
 Vue.use(TooltipPlugin)
 
 // Set base URL

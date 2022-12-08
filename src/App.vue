@@ -111,6 +111,14 @@ export default {
         utterance.rate = 1.2
         textSynth.speak(utterance)
       }
+    },
+    toast: function (config) {
+      this.$bvToast.toast(config.message, {
+        title: config.title,
+        autoHideDelay: 5000,
+        appendToast: true,
+        variant: config.variant || 'info'
+      })
     }
   },
   created: function () {
@@ -123,6 +131,7 @@ export default {
 
     emitter.on('show-loading', this.toggleLoading)
     emitter.on('speak', this.speak)
+    emitter.on('toast', this.toast)
 
     // TODO
     apiPostToken({
@@ -139,6 +148,7 @@ export default {
   beforeDestroy: function () {
     emitter.off('show-loading', this.toggleLoading)
     emitter.off('speak', this.speak)
+    emitter.off('toast', this.toast)
   }
 }
 

@@ -1,5 +1,7 @@
 import { apiAxios } from '@/plugins/api/base'
 
+const apiPostContainers = (data, onSuccess, onError) => apiAxios({ url: 'container', method: 'POST', data: data, success: onSuccess, error: onError })
+
 const apiPostContainerTable = (queryData, onSuccess, onError) => {
   queryData.page -= 1
   return apiAxios({ url: 'container/table', method: 'POST', data: queryData, success: onSuccess, error: onError })
@@ -27,6 +29,7 @@ const apiPostContainerType = (data, onSuccess, onError) => apiAxios({ url: 'cont
 const apiPostContainerImport = (data, onSuccess, onError) => apiAxios({ url: 'import', method: 'POST', data: data, success: onSuccess, error: onError })
 
 export {
+  apiPostContainers,
   apiPostContainerTable,
   apiPostContainerTransfer,
   apiPostContainerTransferTable,

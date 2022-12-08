@@ -10,6 +10,19 @@
       <b-form-group :label="$t('formLabelAddContainerTypesDescription')" label-for="description">
         <b-form-textarea :rows="3" id="description" v-model="description" :state="formState.description" />
       </b-form-group>
+      <b-form-group :label="$t('formLabelAddContainerTypesIcon')" label-for="icon">
+        <b-row>
+          <b-col cols=8>
+            <b-form-textarea :rows="3" :placeholder="$t('formPlaceholderAddContainerTypesIcon')" id="icon" v-model="icon" class="h-100" />
+          </b-col>
+          <b-col cols=4>
+            <div class="border w-100 h-100">
+              <div v-html="icon" v-if="icon" class="svg-image" />
+            </div>
+          </b-col>
+        </b-row>
+        <b-form-file type="file" accept="image/svg+xml" v-model="iconFile" />
+      </b-form-group>
     </b-form>
   </b-modal>
 </template>
@@ -22,10 +35,24 @@ export default {
     return {
       name: null,
       description: null,
+      icon: null,
+      iconFile: null,
       formValidated: null,
       formState: {
         name: null,
         description: null
+      }
+    }
+  },
+  watch: {
+    iconFile: function (newValue) {
+      if (newValue) {
+        const reader = new FileReader()
+        reader.onload = event => {
+          this.icon = event.target.result
+          this.iconFile = null
+        }
+        reader.readAsText(newValue)
       }
     }
   },
@@ -41,7 +68,8 @@ export default {
       if (Object.keys(this.formState).filter(st => !this.formState[st]).length === 0) {
         apiPostContainerType({
           name: this.name,
-          description: this.description
+          description: this.description,
+          icon: this.icon
         }, newContainer => {
           this.$emit('container-type-added', newContainer)
           this.hide()
@@ -54,6 +82,8 @@ export default {
     show: function () {
       this.name = null
       this.description = null
+      this.icon = null
+      this.iconFile = null
       this.formValidated = null
       this.formState = {
         name: null,
@@ -72,4 +102,8 @@ export default {
 </script>
 
 <style>
+.svg-image svg {
+  max-width: 100%;
+  height: auto;
+}
 </style>

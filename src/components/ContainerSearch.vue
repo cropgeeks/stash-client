@@ -21,7 +21,7 @@
     <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="container && showPreview">
       <b-row>
         <b-col cols=12 md=6>
-          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><h5><p><b-badge>{{ container.containerTypeName }}</b-badge></p></h5></b-card-text>
+          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><h5><p><b-badge><span class="container-type-icon" v-if="container.containerTypeIcon" v-html="container.containerTypeIcon" /> {{ container.containerTypeName }}</b-badge></p></h5></b-card-text>
         </b-col>
         <b-col cols=12 md=6>
           <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></h5></b-card-text>
@@ -158,5 +158,8 @@ export default {
 </script>
 
 <style>
-
+.container-type-icon svg {
+  max-height: 24px;
+  max-width: 24px;
+}
 </style>
