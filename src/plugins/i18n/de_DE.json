@@ -1,6 +1,7 @@
 {
   "appTitle": "STASH",
   "buttonAdd": "Hinzufügen",
+  "buttonCancel": "Abbrechen",
   "buttonClose": "Schließen",
   "buttonContainerTransferHistory": "Zeige Verlauf",
   "buttonContainerContent": "Inhalt anzeigen",

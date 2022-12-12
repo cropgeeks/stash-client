@@ -120,7 +120,14 @@ export default {
         parentContainerId: this.targetContainer.containerId,
         items: this.items
       }, result => {
-        // TODO
+        this.$bvModal.msgBoxOk(this.$tc('toastMessageContainersAdded', this.items.length), {
+          title: this.$t('toastTitleSuccess'),
+          okVariant: 'success',
+          centered: true
+        }).then(() => {
+          this.targetContainer = null
+          this.items = []
+        })
       }, {
         codes: [400, 404],
         callback: e => {

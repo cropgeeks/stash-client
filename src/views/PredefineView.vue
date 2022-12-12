@@ -287,7 +287,6 @@ export default {
         }
       })
 
-      emitter.emit('show-loading', true)
       apiPostContainers(this.parsedData.map(d => {
         const atts = attributeColumnIndices.map(ai => {
           return {

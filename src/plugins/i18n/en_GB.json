@@ -1,6 +1,7 @@
 {
   "appTitle": "STASH",
   "buttonAdd": "Add",
+  "buttonCancel": "Cancel",
   "buttonClose": "Close",
   "buttonContainerTransferHistory": "Show history",
   "buttonContainerContent": "Show content",
