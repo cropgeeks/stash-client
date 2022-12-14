@@ -6,7 +6,7 @@
           <b-img fluid src="img/stash.svg" alt="Stash logo" />
         </b-col>
         <b-col cols=12 md=8 order="2" order-md="1">
-          <h1 class="display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
+          <h1 class="stash-title display-4 text-center text-md-left">{{ $t('appTitle') }}</h1>
           <p class="lead text-center text-md-left">{{ $t('pageHomeWelcome') }}</p>
           <p class="text-center text-md-left mb-0">{{ $t('pageHomeInstructions') }}</p>
         </b-col>
@@ -49,5 +49,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
 </style>

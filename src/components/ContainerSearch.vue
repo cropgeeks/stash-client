@@ -18,30 +18,46 @@
       </b-input-group>
     </b-form-group>
 
-    <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="container && showPreview">
-      <b-row>
-        <b-col cols=12 md=6>
-          <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><h5><p><b-badge><span class="container-type-icon" v-if="container.containerTypeIcon" v-html="container.containerTypeIcon" /> {{ container.containerTypeName }}</b-badge></p></h5></b-card-text>
-        </b-col>
-        <b-col cols=12 md=6>
-          <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><h5><p><b-badge>{{ container.containerIsActive }}</b-badge></p></h5></b-card-text>
-        </b-col>
-        <b-col cols=12 md=6>
-          <b-card-text v-if="container.projectName"><h5><BIconJournalAlbum /> {{ $t('widgetContainerProject') }}</h5><p>{{ container.projectName }}</p></b-card-text>
-        </b-col>
-        <b-col cols=12 md=6>
-          <b-card-text v-if="container.trialName"><h5><BIconColumnsGap /> {{ $t('widgetContainerTrial') }}</h5><p>{{ container.trialName || 'N/A' }}</p></b-card-text>
-        </b-col>
-        <b-col cols=12 md=6>
-          <b-card-text v-if="container.subContainerCount !== undefined"><h5><BIconDiagram3 /> {{ $t('widgetContainerSubContainerCount') }}</h5><p>{{ (container.subContainerCount || 0).toLocaleString() }}</p></b-card-text>
-        </b-col>
-      </b-row>
+    <template v-if="container && container.containerId">
+      <b-card :title="container.containerBarcode" :sub-title="container.containerDescription" v-if="showPreview">
+        <b-row>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.containerTypeName"><h5><BIconTag /> {{ $t('widgetContainerType') }}</h5><h5><p><b-badge><span class="container-type-icon" v-if="container.containerTypeIcon" v-html="container.containerTypeIcon" /> {{ container.containerTypeName }}</b-badge></p></h5></b-card-text>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.containerIsActive !== undefined"><h5><BIconCheck2Square /> {{ $t('widgetContainerIsActive') }}</h5><h5><p><b-badge :variant="container.containerIsActive ? 'success' : 'warning'">{{ container.containerIsActive }}</b-badge></p></h5></b-card-text>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.projectName"><h5><BIconJournalAlbum /> {{ $t('widgetContainerProject') }}</h5><p>{{ container.projectName }}</p></b-card-text>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.trialName"><h5><BIconColumnsGap /> {{ $t('widgetContainerTrial') }}</h5><p>{{ container.trialName || 'N/A' }}</p></b-card-text>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.parentId !== undefined">
+              <h5><BIconBoxArrowInUp /> {{ $t('widgetContainerParent') }}</h5>
+              <p>{{ container.parentBarcode }}</p>
+              <h5>
+                <p><b-badge variant="light"><span class="container-type-icon" v-if="container.parentContainerTypeIcon" v-html="container.parentContainerTypeIcon" /> {{ container.parentContainerTypeName }}</b-badge></p>
+              </h5>
+            </b-card-text>
+          </b-col>
+          <b-col cols=12 md=6>
+            <b-card-text v-if="container.subContainerCount !== undefined"><h5><BIconDiagram3 /> {{ $t('widgetContainerSubContainerCount') }}</h5><p>{{ (container.subContainerCount || 0).toLocaleString() }}</p></b-card-text>
+          </b-col>
+        </b-row>
 
-      <template #footer v-if="container && container.containerId">
-        <b-button @click="$refs.containerHistoryModal.show()"><BIconClockHistory /> {{ $t('buttonContainerTransferHistory') }}</b-button>
-        <b-button @click="$refs.containerContentModal.show()" class="ml-3" v-if="container.subContainerCount"><BIconDiagram3 /> {{ $t('buttonContainerContent') }}</b-button>
-      </template>
-    </b-card>
+        <template #footer v-if="container && container.containerId">
+          <b-button @click="$refs.containerHistoryModal.show()"><BIconClockHistory /> {{ $t('buttonContainerTransferHistory') }}</b-button>
+          <b-button @click="$refs.containerContentModal.show()" class="ml-3" v-if="container.subContainerCount"><BIconDiagram3 /> {{ $t('buttonContainerContent') }}</b-button>
+          <b-button @click="clearContainer(container)" class="ml-3" v-if="container.subContainerCount" variant="outline-danger"><BIconTrash /> {{ $t('buttonContainerClear') }}</b-button>
+        </template>
+      </b-card>
+    </template>
+    <template v-else-if="barcode && barcode.length > 0">
+      <b-card :title="$t('widgetContainerNoMatchTitle')" :sub-title="$t('widgetContainerNoMatchSubtitle')">
+      </b-card>
+    </template>
 
     <BarcodeScannerModal ref="barcodeScannerModal" @code-scanned="codeScanned" />
     <ContainerHistoryModal :container="container" ref="containerHistoryModal" />
@@ -53,9 +69,9 @@
 import BarcodeScannerModal from '@/components/modals/BarcodeScannerModal'
 import ContainerHistoryModal from '@/components/modals/ContainerHistoryModal'
 import ContainerContentModal from '@/components/modals/ContainerContentModal'
-import { apiPostContainerTable } from '@/plugins/api/container'
+import { apiGetContainerClear, apiPostContainerTable } from '@/plugins/api/container'
 import { uuidv4 } from '@/plugins/util'
-import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3, BIconClockHistory } from 'bootstrap-vue'
+import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3, BIconClockHistory, BIconBoxArrowInUp, BIconTrash } from 'bootstrap-vue'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -64,8 +80,10 @@ export default {
     BIconCheck2Square,
     BIconTag,
     BIconJournalAlbum,
+    BIconBoxArrowInUp,
     BIconColumnsGap,
     BIconDiagram3,
+    BIconTrash,
     BIconClockHistory,
     BarcodeScannerModal,
     ContainerHistoryModal,
@@ -118,6 +136,17 @@ export default {
     }
   },
   methods: {
+    clearContainer: function (container) {
+      this.$bvModal.msgBoxConfirm(this.$t('modalTextClearContainerConfirm'), {
+        title: this.$t('modalTitleClearContainerConfirm'),
+        okTitle: this.$t('buttonYes'),
+        cancelTitle: this.$t('buttonNo')
+      }).then(value => {
+        if (value) {
+          apiGetContainerClear(container.containerId, () => this.getContainerDetails())
+        }
+      })
+    },
     getContainerDetails: function () {
       apiPostContainerTable({
         page: 1,

@@ -47,7 +47,7 @@ const handleError = (error) => {
       message = i18n.t('httpErrorFourOFour')
       break
     case 405:
-      message = i18n.t('httpErrorFourOFour')
+      message = i18n.t('httpErrorFourOFive')
       break
     case 408:
       message = i18n.t('httpErrorFourOEight')

@@ -47,7 +47,7 @@
 import { mapGetters } from 'vuex'
 import { BIconFlag, BIconVolumeUp, BIconVolumeMute } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
-import { apiPostToken } from '@/plugins/api/auth'
+import { apiCheckToken } from './plugins/api/auth'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -62,7 +62,8 @@ export default {
   computed: {
     ...mapGetters([
       'storeLocale',
-      'storeAudioFeedbackEnabled'
+      'storeAudioFeedbackEnabled',
+      'storeToken'
     ])
   },
   data: function () {
@@ -121,7 +122,16 @@ export default {
       })
     }
   },
-  created: function () {
+  created: async function () {
+    await apiCheckToken({ token: this.storeToken ? this.storeToken.token : null }, result => {
+      if (!result) {
+        this.$router.push({ name: 'login' })
+      }
+    }, {
+      codes: [401],
+      callback: () => this.$router.push({ name: 'login' })
+    })
+
     if (window.speechSynthesis) {
       textSynth = window.speechSynthesis
     }
@@ -132,18 +142,6 @@ export default {
     emitter.on('show-loading', this.toggleLoading)
     emitter.on('speak', this.speak)
     emitter.on('toast', this.toast)
-
-    // TODO
-    apiPostToken({
-      username: '',
-      password: ''
-    }, result => {
-      // Do this here as well
-      this.$store.commit('ON_TOKEN_CHANGED', result)
-
-      // Otherwise, just go to home
-      this.$router.push({ name: 'home' })
-    })
   },
   beforeDestroy: function () {
     emitter.off('show-loading', this.toggleLoading)
@@ -162,6 +160,12 @@ $secondary: #006266;
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import '~bootswatch/dist/pulse/bootswatch';
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap');
+
+.stash-title {
+  font-family: 'Montserrat Subrayada', sans-serif;
+}
 
 .page-header img {
   max-height: 125px;

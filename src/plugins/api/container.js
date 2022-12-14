@@ -28,6 +28,8 @@ const apiPostContainerType = (data, onSuccess, onError) => apiAxios({ url: 'cont
 
 const apiPostContainerImport = (data, onSuccess, onError) => apiAxios({ url: 'import', method: 'POST', data: data, success: onSuccess, error: onError })
 
+const apiGetContainerClear = (containerId, onSuccess, onError) => apiAxios({ url: `container/${containerId}/clear`, success: onSuccess, error: onError })
+
 export {
   apiPostContainers,
   apiPostContainerTable,
@@ -36,5 +38,6 @@ export {
   apiPostContainerTransferEventTable,
   apiPostContainerType,
   apiPostContainerTypeTable,
-  apiPostContainerImport
+  apiPostContainerImport,
+  apiGetContainerClear
 }

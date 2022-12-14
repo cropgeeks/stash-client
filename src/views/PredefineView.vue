@@ -234,7 +234,13 @@ export default {
       }
     },
     parseInput: function () {
-      this.parsedData = d3Dsv.tsvParse(this.pastedInput)
+      // Parse the data and automatically trim it
+      this.parsedData = d3Dsv.tsvParse(this.pastedInput, row => {
+        Object.keys(row).forEach(k => {
+          row[k] = (row[k] !== undefined && row[k] !== null) ? row[k].trim() : null
+        })
+        return row
+      })
 
       if (this.parsedData.length > 0) {
         this.columns = this.parsedData.columns

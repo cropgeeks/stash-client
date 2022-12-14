@@ -3,9 +3,11 @@
     <b-card v-for="event in items" :key="`${event.sourceId}-${event.targetId}-${event.userId}-${event.date}`" class="mb-3">
       <b-row class="d-flex justify-content-between">
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
-          <b-img fluid class="container-img" :src="require('@/assets/img/container.svg')" />
-          <h4>{{ event.sourceBarcode }}</h4>
-          <h5><b-badge>{{ event.sourceType }}</b-badge></h5>
+          <template v-if="event.sourceBarcode">
+            <b-img fluid class="container-img" :src="require('@/assets/img/container.svg')" />
+            <h4>{{ event.sourceBarcode }}</h4>
+            <h5><b-badge>{{ event.sourceType }}</b-badge></h5>
+          </template>
         </b-col>
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
           <b-img class="p-3 transfer-arrow" fluid-grow :src="require('@/assets/img/transfer-arrow.svg')" />
@@ -13,9 +15,11 @@
           <b-button @click="selectEvent(event)"><BIconTable /> {{ $t('buttonShowTable') }}</b-button>
         </b-col>
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
-          <b-img fluid class="container-img" :src="require('@/assets/img/container.svg')" />
-          <h4>{{ event.targetBarcode }}</h4>
-          <h5><b-badge>{{ event.targetType }}</b-badge></h5>
+          <template v-if="event.targetBarcode">
+            <b-img fluid class="container-img" :src="require('@/assets/img/container.svg')" />
+            <h4>{{ event.targetBarcode }}</h4>
+            <h5><b-badge>{{ event.targetType }}</b-badge></h5>
+          </template>
         </b-col>
       </b-row>
     </b-card>
