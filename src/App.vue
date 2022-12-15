@@ -25,6 +25,11 @@
               <span>{{ language.name }}</span>
             </b-dropdown-item>
           </b-nav-item-dropdown>
+          <b-nav-item-dropdown right>
+             <template #button-content>
+              <b-img fluid class="user-icon" :src="userIcon" v-if="userIcon" rounded="circle" />
+             </template>
+          </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -63,8 +68,16 @@ export default {
     ...mapGetters([
       'storeLocale',
       'storeAudioFeedbackEnabled',
-      'storeToken'
-    ])
+      'storeToken',
+      'storeServerUrl'
+    ]),
+    userIcon: function () {
+      if (this.storeToken && this.storeToken.id && this.storeToken.imageToken) {
+        return `${this.storeServerUrl}user/${this.storeToken.id}/img?imageToken=${this.storeToken.imageToken}`
+      } else {
+        return null
+      }
+    }
   },
   data: function () {
     return {
@@ -123,14 +136,7 @@ export default {
     }
   },
   created: async function () {
-    await apiCheckToken({ token: this.storeToken ? this.storeToken.token : null }, result => {
-      if (!result) {
-        this.$router.push({ name: 'login' })
-      }
-    }, {
-      codes: [401],
-      callback: () => this.$router.push({ name: 'login' })
-    })
+    await apiCheckToken({ token: this.storeToken ? this.storeToken.token : null })
 
     if (window.speechSynthesis) {
       textSynth = window.speechSynthesis
@@ -175,5 +181,12 @@ $secondary: #006266;
   .page-header img {
     max-height: 150px;
   }
+}
+</style>
+
+<style scoped>
+.user-icon {
+  height: 25px;
+  width: 25px;
 }
 </style>
