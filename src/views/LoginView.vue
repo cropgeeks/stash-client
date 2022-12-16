@@ -11,7 +11,7 @@
       <b-form-group :label="$t('formLabelLoginPassword')" label-for="password">
         <b-form-input type="password" id="password" v-model="password" required />
       </b-form-group>
-      <b-button size="lg" variant="primary" block type="submit">{{ $t('buttonSignIn') }}</b-button>
+      <b-button size="lg" variant="primary" block type="submit"><BIconBoxArrowInRight /> {{ $t('buttonSignIn') }}</b-button>
     </b-form>
   </div>
 </template>
@@ -19,9 +19,14 @@
 <script>
 import { apiPostToken } from '@/plugins/api/auth'
 
+import { BIconBoxArrowInRight } from 'bootstrap-vue'
+
 const emitter = require('tiny-emitter/instance')
 
 export default {
+  components: {
+    BIconBoxArrowInRight
+  },
   data: function () {
     return {
       email: null,

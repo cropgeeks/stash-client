@@ -10,7 +10,11 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav>
+        <b-navbar-nav v-if="storeToken && storeToken.token">
+          <b-nav-item @click="toggleSearch"><BIconSearch /> {{ $t('menuSearch') }}</b-nav-item>
+          <b-nav-item :to="{ name: 'predefine' }"><BIconUiChecks /> {{ $t('menuPredefine') }}</b-nav-item>
+          <b-nav-item :to="{ name: 'import' }"><BIconBoxArrowInDownRight /> {{ $t('menuImport') }}</b-nav-item>
+          <b-nav-item :to="{ name: 'transfer' }"><BIconArrowLeftRight /> {{ $t('menuTransfer') }}</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
@@ -25,10 +29,11 @@
               <span>{{ language.name }}</span>
             </b-dropdown-item>
           </b-nav-item-dropdown>
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right v-if="storeToken && storeToken.token">
              <template #button-content>
               <b-img fluid class="user-icon" :src="userIcon" v-if="userIcon" rounded="circle" />
              </template>
+             <b-dropdown-item @click="logout"><BIconBoxArrowRight /> {{ $t('dropdownSignOut') }}</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
@@ -50,9 +55,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { BIconFlag, BIconVolumeUp, BIconVolumeMute } from 'bootstrap-vue'
+import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
-import { apiCheckToken } from './plugins/api/auth'
+import { apiCheckToken, apiDeleteToken } from './plugins/api/auth'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -62,7 +67,12 @@ export default {
   components: {
     BIconFlag,
     BIconVolumeUp,
-    BIconVolumeMute
+    BIconVolumeMute,
+    BIconBoxArrowRight,
+    BIconSearch,
+    BIconUiChecks,
+    BIconBoxArrowInDownRight,
+    BIconArrowLeftRight
   },
   computed: {
     ...mapGetters([
@@ -93,6 +103,9 @@ export default {
     }
   },
   methods: {
+    toggleSearch: function () {
+      // TODO
+    },
     toggleAudioFeedback: function () {
       this.$store.dispatch('setAudioFeedbackEnabled', !this.storeAudioFeedbackEnabled)
     },
@@ -132,6 +145,20 @@ export default {
         autoHideDelay: 5000,
         appendToast: true,
         variant: config.variant || 'info'
+      })
+    },
+    logout: function () {
+      apiDeleteToken({
+        password: this.storeToken.token
+      }, () => {
+        this.$store.dispatch('setToken', null)
+        this.$router.push({ name: 'login' })
+      }, {
+        codes: [], // Handle all errors by logging out
+        callback: () => {
+          this.$store.dispatch('setToken', null)
+          this.$router.push({ name: 'login' })
+        }
       })
     }
   },
