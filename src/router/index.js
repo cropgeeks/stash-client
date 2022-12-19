@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import store from '@/store'
+import { loadLanguageAsync } from '@/plugins/i18n'
+
+const emitter = require('tiny-emitter/instance')
 
 Vue.use(VueRouter)
 
@@ -39,6 +43,11 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  emitter.emit('toggle-search')
+  loadLanguageAsync(store.getters.storeLocale).then(() => next())
 })
 
 export default router

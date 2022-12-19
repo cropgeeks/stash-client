@@ -14,7 +14,7 @@
             </svg>
           </b-button>
         </b-input-group-prepend>
-        <b-form-input ref="barcodeInput" :tabindex="tabIndex" :id="`container-${id}`" lazy :autofocus="autofocus" v-model="barcode" required />
+        <b-form-input ref="barcodeInput" type="search" :tabindex="tabIndex" :id="`container-${id}`" lazy :autofocus="autofocus" v-model="barcode" required />
       </b-input-group>
     </b-form-group>
 
@@ -54,7 +54,7 @@
         </template>
       </b-card>
     </template>
-    <template v-else-if="barcode && barcode.length > 0">
+    <template v-else-if="barcode && barcode.length > 0 && containers.length < 1">
       <b-card :title="$t('widgetContainerNoMatchTitle')" :sub-title="$t('widgetContainerNoMatchSubtitle')">
       </b-card>
     </template>
@@ -62,6 +62,7 @@
     <BarcodeScannerModal ref="barcodeScannerModal" @code-scanned="codeScanned" />
     <ContainerHistoryModal :container="container" ref="containerHistoryModal" />
     <ContainerContentModal :container="container" ref="containerContentModal" />
+    <ContainerSelectModal :containers="containers" ref="containerSelectModal" @container-selected="toSelect => { container = toSelect }" />
   </div>
 </template>
 
@@ -69,9 +70,11 @@
 import BarcodeScannerModal from '@/components/modals/BarcodeScannerModal'
 import ContainerHistoryModal from '@/components/modals/ContainerHistoryModal'
 import ContainerContentModal from '@/components/modals/ContainerContentModal'
+import ContainerSelectModal from '@/components/modals/ContainerSelectModal'
 import { apiGetContainerClear, apiPostContainerTable } from '@/plugins/api/container'
 import { uuidv4 } from '@/plugins/util'
 import { BIconCheck2Square, BIconTag, BIconColumnsGap, BIconJournalAlbum, BIconDiagram3, BIconClockHistory, BIconBoxArrowInUp, BIconTrash } from 'bootstrap-vue'
+import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -87,7 +90,8 @@ export default {
     BIconClockHistory,
     BarcodeScannerModal,
     ContainerHistoryModal,
-    ContainerContentModal
+    ContainerContentModal,
+    ContainerSelectModal
   },
   props: {
     label: {
@@ -117,6 +121,7 @@ export default {
     return {
       id: id,
       barcode: null,
+      containers: [],
       container: null
     }
   },
@@ -132,6 +137,13 @@ export default {
         this.getContainerDetails()
       } else {
         this.container = null
+      }
+    },
+    containers: function (newValue) {
+      if (newValue && newValue.length > 0) {
+        this.$refs.containerSelectModal.show()
+      } else {
+        this.$refs.containerSelectModal.hide()
       }
     }
   },
@@ -150,22 +162,33 @@ export default {
     getContainerDetails: function () {
       apiPostContainerTable({
         page: 1,
-        limit: 1,
+        limit: MAX_JAVA_INTEGER,
         filter: [{
           column: 'containerBarcode',
           comparator: 'equals',
-          operator: 'and',
+          operator: 'or',
+          values: [this.barcode]
+        }, {
+          column: 'containerDescription',
+          comparator: 'contains',
+          operator: 'or',
           values: [this.barcode]
         }]
       }, result => {
-        if (result && result.data && result.data.length > 0) {
-          this.container = result.data[0]
+        if (result && result.data) {
+          if (result.data.length === 1) {
+            this.container = result.data[0]
+            this.containers = []
+          } else {
+            this.container = null
+            this.containers = result.data
+          }
         } else {
           this.container = {
-            containerBarcode: this.barcode,
-            containerDescription: this.barcode,
-            isActive: true
+            containerBarcode: this.$t('widgetContainerNoMatchTitle'),
+            containerDescription: this.$t('widgetContainerNoMatchSubtitle')
           }
+          this.containers = []
         }
       })
     },

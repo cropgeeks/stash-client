@@ -1,6 +1,5 @@
 import axios from 'axios'
 import store from '@/store'
-import router from '@/router'
 import { i18n } from '@/plugins/i18n.js'
 
 const MAX_JAVA_INTEGER = 2147483647
@@ -35,12 +34,14 @@ const handleError = (error) => {
     case 401:
       message = i18n.t('httpErrorFourOOne')
       store.dispatch('setToken', null)
-      router.push({ name: 'login' })
+      // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
+      emitter.emit('route', { name: 'login' })
       return
     case 403: {
       message = i18n.t('httpErrorFourOThree')
       store.dispatch('setToken', null)
-      router.push({ name: 'login' })
+      // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
+      emitter.emit('route', { name: 'login' })
       return
     }
     case 404:
@@ -143,7 +144,8 @@ const apiAxios = ({ url = null, method = 'GET', data = null, dataType = 'json', 
       if (!error) {
         if (err.response.status === 403) {
           store.dispatch('setToken', null)
-          router.push({ name: 'login' })
+          // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
+          emitter.emit('route', { name: 'login' })
         } else if (process.env.NODE_ENV === 'development') {
           console.error(err)
         }

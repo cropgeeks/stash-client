@@ -10,6 +10,7 @@ import {
   BadgePlugin,
   ButtonPlugin,
   CardPlugin,
+  CollapsePlugin,
   FormPlugin,
   FormInputPlugin,
   FormGroupPlugin,
@@ -35,6 +36,7 @@ Vue.config.productionTip = false
 Vue.use(BadgePlugin)
 Vue.use(ButtonPlugin)
 Vue.use(CardPlugin)
+Vue.use(CollapsePlugin)
 Vue.use(FormPlugin)
 Vue.use(FormInputPlugin)
 Vue.use(FormGroupPlugin)

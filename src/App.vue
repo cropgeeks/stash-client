@@ -39,6 +39,10 @@
       </b-collapse>
     </b-navbar>
 
+    <b-collapse v-model="searchVisible" class="bg-primary">
+      <ContainerSearch label="formLabelSearch" :description="null" :tabIndex="1" autofocus @container-selected="() => {}" class="p-3" v-if="searchVisible" />
+    </b-collapse>
+
     <!-- The main content -->
     <b-container class="mt-4">
       <router-view :key="$route.path" />
@@ -54,6 +58,8 @@
 </template>
 
 <script>
+import ContainerSearch from '@/components/ContainerSearch'
+
 import { mapGetters } from 'vuex'
 import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
@@ -72,7 +78,8 @@ export default {
     BIconSearch,
     BIconUiChecks,
     BIconBoxArrowInDownRight,
-    BIconArrowLeftRight
+    BIconArrowLeftRight,
+    ContainerSearch
   },
   computed: {
     ...mapGetters([
@@ -99,13 +106,12 @@ export default {
         locale: 'de_DE',
         name: 'Deutsch - Deutschland',
         icon: '🇩🇪'
-      }]
+      }],
+      searchVisible: false,
+      searchTerm: null
     }
   },
   methods: {
-    toggleSearch: function () {
-      // TODO
-    },
     toggleAudioFeedback: function () {
       this.$store.dispatch('setAudioFeedbackEnabled', !this.storeAudioFeedbackEnabled)
     },
@@ -160,6 +166,12 @@ export default {
           this.$router.push({ name: 'login' })
         }
       })
+    },
+    toggleSearch: function () {
+      this.searchVisible = !this.searchVisible
+    },
+    route: function (target) {
+      this.$router.push(target)
     }
   },
   created: async function () {
@@ -175,11 +187,15 @@ export default {
     emitter.on('show-loading', this.toggleLoading)
     emitter.on('speak', this.speak)
     emitter.on('toast', this.toast)
+    emitter.on('toggle-search', this.toggleSearch)
+    emitter.on('route', this.route)
   },
   beforeDestroy: function () {
     emitter.off('show-loading', this.toggleLoading)
     emitter.off('speak', this.speak)
     emitter.off('toast', this.toast)
+    emitter.off('toggle-search', this.toggleSearch)
+    emitter.off('route', this.route)
   }
 }
 
