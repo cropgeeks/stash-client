@@ -11,7 +11,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav v-if="storeToken && storeToken.token">
-          <b-nav-item @click="toggleSearch"><BIconSearch /> {{ $t('menuSearch') }}</b-nav-item>
+          <b-nav-item @click="setSearchVisible()"><BIconSearch /> {{ $t('menuSearch') }}</b-nav-item>
           <b-nav-item :to="{ name: 'predefine' }"><BIconUiChecks /> {{ $t('menuPredefine') }}</b-nav-item>
           <b-nav-item :to="{ name: 'import' }"><BIconBoxArrowInDownRight /> {{ $t('menuImport') }}</b-nav-item>
           <b-nav-item :to="{ name: 'transfer' }"><BIconArrowLeftRight /> {{ $t('menuTransfer') }}</b-nav-item>
@@ -31,7 +31,7 @@
           </b-nav-item-dropdown>
           <b-nav-item-dropdown right v-if="storeToken && storeToken.token">
              <template #button-content>
-              <b-img fluid class="user-icon" :src="userIcon" v-if="userIcon" rounded="circle" />
+              <b-avatar :src="userIcon" :size="25" v-if="userIcon" />
              </template>
              <b-dropdown-item @click="logout"><BIconBoxArrowRight /> {{ $t('dropdownSignOut') }}</b-dropdown-item>
           </b-nav-item-dropdown>
@@ -39,7 +39,7 @@
       </b-collapse>
     </b-navbar>
 
-    <b-collapse v-model="searchVisible" class="bg-primary">
+    <b-collapse v-model="searchVisible" class="bg-primary" v-if="storeToken && storeToken.token">
       <ContainerSearch label="formLabelSearch" :description="null" :tabIndex="1" autofocus @container-selected="() => {}" class="p-3" v-if="searchVisible" />
     </b-collapse>
 
@@ -167,8 +167,12 @@ export default {
         }
       })
     },
-    toggleSearch: function () {
-      this.searchVisible = !this.searchVisible
+    setSearchVisible: function (value) {
+      if (value !== undefined && value !== null) {
+        this.searchVisible = value
+      } else {
+        this.searchVisible = !this.searchVisible
+      }
     },
     route: function (target) {
       this.$router.push(target)
@@ -187,14 +191,14 @@ export default {
     emitter.on('show-loading', this.toggleLoading)
     emitter.on('speak', this.speak)
     emitter.on('toast', this.toast)
-    emitter.on('toggle-search', this.toggleSearch)
+    emitter.on('set-search-visible', this.setSearchVisible)
     emitter.on('route', this.route)
   },
   beforeDestroy: function () {
     emitter.off('show-loading', this.toggleLoading)
     emitter.off('speak', this.speak)
     emitter.off('toast', this.toast)
-    emitter.off('toggle-search', this.toggleSearch)
+    emitter.off('set-search-visible', this.setSearchVisible)
     emitter.off('route', this.route)
   }
 }
@@ -227,7 +231,7 @@ $secondary: #006266;
 }
 </style>
 
-<style scoped>
+<style>
 .user-icon {
   height: 25px;
   width: 25px;

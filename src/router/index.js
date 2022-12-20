@@ -35,6 +35,16 @@ const routes = [
     component: () => import(/* webpackChunkName: "predefine" */ '@/views/PredefineView')
   },
   {
+    path: '/user',
+    name: 'user',
+    component: () => import(/* webpackChunkName: "user" */ '@/views/UserView')
+  },
+  {
+    path: '/user/:userId',
+    name: 'user-details',
+    component: () => import(/* webpackChunkName: "user" */ '@/views/UserView')
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import(/* webpackChunkName: "about" */ '@/views/AboutView')
@@ -46,7 +56,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  emitter.emit('toggle-search')
+  emitter.emit('set-search-visible', false)
   loadLanguageAsync(store.getters.storeLocale).then(() => next())
 })
 

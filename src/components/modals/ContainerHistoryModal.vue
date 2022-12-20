@@ -10,10 +10,11 @@
     <div v-if="container && container.containerId && isShowing">
       <b-tabs>
         <b-tab :title="$t('tabsContainerHistorySelf')">
-          <ContainerTransferTable sortBy="createdOn" :sortDescending="true" :getData="getTransferDataSelf" />
+          <!-- <ContainerTransferTable sortBy="createdOn" :sortDescending="true" :getData="getTransferDataSelf" /> -->
+          <ContainerTransferEvents :container="container" />
         </b-tab>
         <b-tab :title="$t('tabsContainerHistoryChild')">
-          <ContainerTransferEvents :container="container" />
+          <ContainerTransferEvents :parent="container" />
         </b-tab>
       </b-tabs>
     </div>
@@ -21,14 +22,14 @@
 </template>
 
 <script>
-import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
+// import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
 import ContainerTransferEvents from '@/components/ContainerTransferEvents'
 import { apiPostContainerTransferTable } from '@/plugins/api/container'
 
 export default {
   components: {
-    ContainerTransferEvents,
-    ContainerTransferTable
+    ContainerTransferEvents
+    // ContainerTransferTable
   },
   props: {
     container: {

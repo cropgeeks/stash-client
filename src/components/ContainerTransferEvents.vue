@@ -11,7 +11,10 @@
         </b-col>
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
           <b-img class="p-3 transfer-arrow" fluid-grow :src="require('@/assets/img/transfer-arrow.svg')" />
-          <h6>{{ $t('modalTextContainerHistoryTransferEventCount', { count: event.containerCount, date: new Date(event.date).toLocaleDateString() }) }}</h6>
+          <div class="d-flex flex-row justify-content-between align-items-center mb-3">
+            <b-avatar class="mr-2" :src="`${storeServerUrl}user/${event.userId}/img?imageToken=${storeToken.imageToken}`" />
+            <h6 class="p-0 m-0">{{ $t('modalTextContainerHistoryTransferEventCount', { count: event.containerCount, date: new Date(event.date).toLocaleDateString(), name: event.userName }) }}</h6>
+          </div>
           <b-button @click="selectEvent(event)"><BIconTable /> {{ $t('buttonShowTable') }}</b-button>
         </b-col>
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
@@ -34,6 +37,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
 import { apiPostContainerTransferEventTable, apiPostContainerTransferTable } from '@/plugins/api/container'
 
@@ -48,6 +53,10 @@ export default {
     container: {
       type: Object,
       default: () => null
+    },
+    parent: {
+      type: Object,
+      default: () => null
     }
   },
   data: function () {
@@ -59,12 +68,21 @@ export default {
       selectedEvent: null
     }
   },
+  computed: {
+    ...mapGetters([
+      'storeServerUrl',
+      'storeToken'
+    ])
+  },
   watch: {
     page: function () {
       this.selectedEvent = null
       this.update()
     },
     container: function () {
+      this.update()
+    },
+    parent: function () {
       this.update()
     },
     selectedEvent: function () {
@@ -111,17 +129,7 @@ export default {
         page: this.page,
         limit: this.perPage,
         prevCount: this.totalRows,
-        filter: [{
-          column: 'sourceId',
-          comparator: 'equals',
-          operator: 'or',
-          values: [this.container ? this.container.containerId : null]
-        }, {
-          column: 'targetId',
-          comparator: 'equals',
-          operator: 'or',
-          values: [this.container ? this.container.containerId : null]
-        }],
+        filter: this.getFilter(),
         orderBy: 'date',
         ascending: 0
       }, result => {
@@ -130,6 +138,28 @@ export default {
           this.totalRows = result.count
         }
       })
+    },
+    getFilter: function () {
+      if (this.parent) {
+        return [{
+          column: 'sourceId',
+          comparator: 'equals',
+          operator: 'or',
+          values: [this.parent ? this.parent.containerId : null]
+        }, {
+          column: 'targetId',
+          comparator: 'equals',
+          operator: 'or',
+          values: [this.parent ? this.parent.containerId : null]
+        }]
+      } else {
+        return [{
+          column: 'containerIds',
+          comparator: 'arrayContains',
+          operator: 'and',
+          values: [this.container ? this.container.containerId : null]
+        }]
+      }
     }
   },
   mounted: function () {

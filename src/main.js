@@ -28,11 +28,13 @@ import {
   TooltipPlugin,
   ListGroupPlugin,
   ToastPlugin,
-  FormFilePlugin
+  FormFilePlugin,
+  AvatarPlugin
 } from 'bootstrap-vue'
 
 Vue.config.productionTip = false
 
+Vue.use(AvatarPlugin)
 Vue.use(BadgePlugin)
 Vue.use(ButtonPlugin)
 Vue.use(CardPlugin)

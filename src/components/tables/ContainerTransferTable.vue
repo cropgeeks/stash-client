@@ -76,9 +76,9 @@ export default {
         label: this.$t('tableColumnTransferLogTargetDescription'),
         class: 'border-right'
       }, {
-        key: 'userId',
+        key: 'userName',
         sortable: true,
-        label: this.$t('tableColumnTransferLogUserId')
+        label: this.$t('tableColumnTransferLogUserName')
       }, {
         key: 'createdOn',
         sortable: true,
