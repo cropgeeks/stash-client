@@ -3,9 +3,13 @@
     <b-table hover striped responsive :fields="fields" :items="items">
       <template v-slot:cell(stats)="data">
         <Cartesian :width="200" :height="50" :data="getValues(data.item)">
-          <Bar animated prop="value" />
+          <Area animated prop="value" />
           <Tooltip />
         </Cartesian>
+      </template>
+
+      <template v-slot:cell(userType)="data">
+        <b-badge :style="{ backgroundColor: userTypes[data.item.userType].bgColor, color: userTypes[data.item.userType].fgColor }">{{ userTypes[data.item.userType].text }}</b-badge>
       </template>
     </b-table>
 
@@ -17,12 +21,13 @@
 </template>
 
 <script>
-import { Cartesian, Bar, Tooltip } from 'laue'
+import { Cartesian, Area, Tooltip } from 'laue'
+import { getColor, getTextColor, PALETTE_HUTTON } from '@/plugins/color'
 
 export default {
   components: {
     Cartesian,
-    Bar,
+    Area,
     Tooltip
   },
   props: {
@@ -53,6 +58,25 @@ export default {
     }
   },
   computed: {
+    userTypes: function () {
+      return {
+        admin: {
+          text: this.$t('typesUserAdmin'),
+          bgColor: getColor(PALETTE_HUTTON, 0),
+          fgColor: getTextColor(PALETTE_HUTTON, 0)
+        },
+        regular: {
+          text: this.$t('typesUserRegular'),
+          bgColor: getColor(PALETTE_HUTTON, 1),
+          fgColor: getTextColor(PALETTE_HUTTON, 1)
+        },
+        reference: {
+          text: this.$t('typesUserReference'),
+          bgColor: getColor(PALETTE_HUTTON, 2),
+          fgColor: getTextColor(PALETTE_HUTTON, 2)
+        }
+      }
+    },
     yearMonths: function () {
       if (this.date) {
         const result = [this.date.toISOString().substring(0, 7)]
@@ -100,8 +124,6 @@ export default {
           return { value: 0, name: ym }
         }
       })
-
-      console.log(userStats, result)
 
       return result
     },

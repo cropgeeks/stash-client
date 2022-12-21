@@ -39,10 +39,10 @@ const handleError = (error) => {
       return
     case 403: {
       message = i18n.t('httpErrorFourOThree')
-      store.dispatch('setToken', null)
+      // store.dispatch('setToken', null)
       // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
-      emitter.emit('route', { name: 'login' })
-      return
+      // emitter.emit('route', { name: 'login' })
+      break
     }
     case 404:
       message = i18n.t('httpErrorFourOFour')
@@ -142,7 +142,7 @@ const apiAxios = ({ url = null, method = 'GET', data = null, dataType = 'json', 
       // Log the user out if the result is forbidden and no error method has been provided
       // Otherwise, we assume that the calling method takes care of the error
       if (!error) {
-        if (err.response.status === 403) {
+        if (err.response.status === 401) {
           store.dispatch('setToken', null)
           // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
           emitter.emit('route', { name: 'login' })

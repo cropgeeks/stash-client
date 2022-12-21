@@ -33,6 +33,10 @@
              <template #button-content>
               <b-avatar :src="userIcon" :size="25" v-if="userIcon" />
              </template>
+             <template v-if="userIsAdmin">
+              <b-dropdown-item :to="{ name: 'user' }"><BIconPeople /> {{ $t('dropdownUsers') }}</b-dropdown-item>
+              <b-dropdown-divider />
+             </template>
              <b-dropdown-item @click="logout"><BIconBoxArrowRight /> {{ $t('dropdownSignOut') }}</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -61,9 +65,9 @@
 import ContainerSearch from '@/components/ContainerSearch'
 
 import { mapGetters } from 'vuex'
-import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight } from 'bootstrap-vue'
+import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight, BIconPeople } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
-import { apiCheckToken, apiDeleteToken } from './plugins/api/auth'
+import { apiCheckToken, apiDeleteToken, userIsAtLeast } from './plugins/api/auth'
 
 const emitter = require('tiny-emitter/instance')
 
@@ -79,6 +83,7 @@ export default {
     BIconUiChecks,
     BIconBoxArrowInDownRight,
     BIconArrowLeftRight,
+    BIconPeople,
     ContainerSearch
   },
   computed: {
@@ -88,6 +93,13 @@ export default {
       'storeToken',
       'storeServerUrl'
     ]),
+    userIsAdmin: function () {
+      if (this.storeToken && this.storeToken.userType && userIsAtLeast(this.storeToken.userType, 'admin')) {
+        return true
+      } else {
+        return false
+      }
+    },
     userIcon: function () {
       if (this.storeToken && this.storeToken.id && this.storeToken.imageToken) {
         return `${this.storeServerUrl}user/${this.storeToken.id}/img?imageToken=${this.storeToken.imageToken}`
@@ -123,8 +135,6 @@ export default {
       loadLanguageAsync(language.locale).then(() => {
         this.$i18n.locale = language.locale
         this.$store.dispatch('setLocale', language.locale)
-
-        this.plausibleEvent('locale-change', { locale: language.locale })
       })
     },
     toggleLoading: function (show) {
