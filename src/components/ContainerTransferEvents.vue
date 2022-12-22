@@ -12,7 +12,7 @@
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
           <b-img class="p-3 transfer-arrow" fluid-grow :src="require('@/assets/img/transfer-arrow.svg')" />
           <div class="d-flex flex-row justify-content-between align-items-center mb-3">
-            <b-avatar class="mr-2" :src="`${storeServerUrl}user/${event.userId}/img?imageToken=${storeToken.imageToken}`" />
+            <CustomAvatar :user="{ id: event.userId, name: event.userName }" class="mr-2" />
             <h6 class="p-0 m-0">{{ $t('modalTextContainerHistoryTransferEventCount', { count: event.containerCount, date: new Date(event.date).toLocaleDateString(), name: event.userName }) }}</h6>
           </div>
           <b-button @click="selectEvent(event)"><BIconTable /> {{ $t('buttonShowTable') }}</b-button>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import CustomAvatar from '@/components/CustomAvatar'
 
 import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
 import { apiPostContainerTransferEventTable, apiPostContainerTransferTable } from '@/plugins/api/container'
@@ -47,6 +47,7 @@ import { BIconTable } from 'bootstrap-vue'
 export default {
   components: {
     BIconTable,
+    CustomAvatar,
     ContainerTransferTable
   },
   props: {
@@ -67,12 +68,6 @@ export default {
       totalRows: -1,
       selectedEvent: null
     }
-  },
-  computed: {
-    ...mapGetters([
-      'storeServerUrl',
-      'storeToken'
-    ])
   },
   watch: {
     page: function () {
@@ -96,33 +91,31 @@ export default {
     selectEvent: function (event) {
       this.selectedEvent = event
     },
-    getTransferDataChild: function (page, limit, prevCount) {
-      return apiPostContainerTransferTable({
-        page: page,
-        limit: limit,
-        prevCount: prevCount,
-        filter: [{
-          column: 'sourceId',
-          comparator: 'equals',
-          operator: 'or',
-          values: [this.selectedEvent.sourceId]
-        }, {
-          column: 'targetId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.selectedEvent.targetId]
-        }, {
-          column: 'createdOn',
-          comparator: 'contains',
-          operator: 'and',
-          values: [this.selectedEvent.date.substring(0, 10)]
-        }, {
-          column: 'userId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.selectedEvent.userId]
-        }]
-      })
+    getTransferDataChild: function (params) {
+      const p = JSON.parse(JSON.stringify(params))
+      p.filter = [{
+        column: 'sourceId',
+        comparator: 'equals',
+        operator: 'or',
+        values: [this.selectedEvent.sourceId]
+      }, {
+        column: 'targetId',
+        comparator: 'equals',
+        operator: 'and',
+        values: [this.selectedEvent.targetId]
+      }, {
+        column: 'createdOn',
+        comparator: 'contains',
+        operator: 'and',
+        values: [this.selectedEvent.date.substring(0, 10)]
+      }, {
+        column: 'userId',
+        comparator: 'equals',
+        operator: 'and',
+        values: [this.selectedEvent.userId]
+      }]
+
+      return apiPostContainerTransferTable(p)
     },
     update: function () {
       apiPostContainerTransferEventTable({

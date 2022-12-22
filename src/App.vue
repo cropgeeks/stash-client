@@ -31,7 +31,7 @@
           </b-nav-item-dropdown>
           <b-nav-item-dropdown right v-if="storeToken && storeToken.token">
              <template #button-content>
-              <b-avatar :src="userIcon" :size="25" v-if="userIcon" />
+              <CustomAvatar variant="primary" size="25" :user="{ id: storeToken.id, name: storeToken.fullName }" v-if="storeToken && storeToken.id" />
              </template>
              <template v-if="userIsAdmin">
               <b-dropdown-item :to="{ name: 'user' }"><BIconPeople /> {{ $t('dropdownUsers') }}</b-dropdown-item>
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import CustomAvatar from '@/components/CustomAvatar'
 import ContainerSearch from '@/components/ContainerSearch'
 
 import { mapGetters } from 'vuex'
@@ -84,27 +85,20 @@ export default {
     BIconBoxArrowInDownRight,
     BIconArrowLeftRight,
     BIconPeople,
+    CustomAvatar,
     ContainerSearch
   },
   computed: {
     ...mapGetters([
       'storeLocale',
       'storeAudioFeedbackEnabled',
-      'storeToken',
-      'storeServerUrl'
+      'storeToken'
     ]),
     userIsAdmin: function () {
       if (this.storeToken && this.storeToken.userType && userIsAtLeast(this.storeToken.userType, 'admin')) {
         return true
       } else {
         return false
-      }
-    },
-    userIcon: function () {
-      if (this.storeToken && this.storeToken.id && this.storeToken.imageToken) {
-        return `${this.storeServerUrl}user/${this.storeToken.id}/img?imageToken=${this.storeToken.imageToken}`
-      } else {
-        return null
       }
     }
   },

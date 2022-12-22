@@ -16,12 +16,8 @@ export default {
     UserTable
   },
   methods: {
-    getData: function (page, limit, prevCount) {
-      return apiPostUserTable({
-        page: page,
-        limit: limit,
-        prevCount: prevCount
-      })
+    getData: function (params) {
+      return apiPostUserTable(params)
     }
   }
 }

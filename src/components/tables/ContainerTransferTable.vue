@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table hover striped responsive :fields="transferFields" :items="transfers" :sort-by="sortBy" :sort-desc="sortDescending">
+    <b-table hover striped responsive :fields="transferFields" :items="transfers"  no-local-sorting :sort-by.sync="transferSortBy" :sort-desc.sync="transferSortDescending">
     </b-table>
 
     <b-pagination v-if="transferTotalRows > transferPerPage"
@@ -38,11 +38,19 @@ export default {
       transfers: [],
       transferPage: 1,
       transferPerPage: 10,
-      transferTotalRows: -1
+      transferTotalRows: -1,
+      transferSortBy: null,
+      transferSortDescending: false
     }
   },
   watch: {
     transferPage: function () {
+      this.update()
+    },
+    transferSortBy: function () {
+      this.update()
+    },
+    transferSortDescending: function () {
       this.update()
     }
   },
@@ -89,16 +97,23 @@ export default {
   },
   methods: {
     update: function () {
-      this.getData(this.transferPage, this.transferPerPage, this.transferTotalRows)
-        .then(result => {
-          if (result && result.data) {
-            this.transfers = result.data.data
-            this.transferTotalRows = result.data.count
-          }
-        })
+      this.getData({
+        page: this.transferPage,
+        limit: this.transferPerPage,
+        prevCount: this.transferTotalRows,
+        orderBy: this.transferSortBy,
+        ascending: this.transferSortDescending ? 0 : 1
+      }).then(result => {
+        if (result && result.data) {
+          this.transfers = result.data.data
+          this.transferTotalRows = result.data.count
+        }
+      })
     }
   },
   mounted: function () {
+    this.transferSortBy = this.sortBy
+    this.transferSortDescending = this.sortDescending
     this.update()
   }
 }

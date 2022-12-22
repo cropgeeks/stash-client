@@ -10,7 +10,6 @@
     <div v-if="container && container.containerId && isShowing">
       <b-tabs>
         <b-tab :title="$t('tabsContainerHistorySelf')">
-          <!-- <ContainerTransferTable sortBy="createdOn" :sortDescending="true" :getData="getTransferDataSelf" /> -->
           <ContainerTransferEvents :container="container" />
         </b-tab>
         <b-tab :title="$t('tabsContainerHistoryChild')">
@@ -22,14 +21,12 @@
 </template>
 
 <script>
-// import ContainerTransferTable from '@/components/tables/ContainerTransferTable'
 import ContainerTransferEvents from '@/components/ContainerTransferEvents'
 import { apiPostContainerTransferTable } from '@/plugins/api/container'
 
 export default {
   components: {
     ContainerTransferEvents
-    // ContainerTransferTable
   },
   props: {
     container: {
@@ -43,18 +40,16 @@ export default {
     }
   },
   methods: {
-    getTransferDataSelf: function (page, limit, prevCount) {
-      return apiPostContainerTransferTable({
-        page: page,
-        limit: limit,
-        prevCount: prevCount,
-        filter: [{
-          column: 'containerId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.container.containerId]
-        }]
-      })
+    getTransferDataSelf: function (params) {
+      const p = JSON.parse(JSON.stringify(params))
+      p.filter = [{
+        column: 'containerId',
+        comparator: 'equals',
+        operator: 'and',
+        values: [this.container.containerId]
+      }]
+
+      return apiPostContainerTransferTable(p)
     },
     /**
      * Shows the modal dialog and resets it to its initial state

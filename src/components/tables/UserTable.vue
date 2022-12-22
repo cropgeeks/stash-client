@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table hover striped responsive :fields="fields" :items="items">
+    <b-table hover striped responsive :fields="fields" :items="items" no-local-sorting :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
       <template v-slot:cell(stats)="data">
         <Cartesian :width="200" :height="50" :data="getValues(data.item)">
           <Area animated prop="value" />
@@ -8,8 +8,19 @@
         </Cartesian>
       </template>
 
+      <template v-slot:cell(icon)="data">
+        <CustomAvatar :user="data.item" :searchParams="{ timestamp: apiCallTimestamp }" />
+      </template>
+
       <template v-slot:cell(userType)="data">
-        <b-badge :style="{ backgroundColor: userTypes[data.item.userType].bgColor, color: userTypes[data.item.userType].fgColor }">{{ userTypes[data.item.userType].text }}</b-badge>
+        <b-badge :variant="userTypes[data.item.userType].variant">{{ userTypes[data.item.userType].text }}</b-badge>
+      </template>
+
+      <template v-slot:cell(actions)="data">
+        <b-button-group>
+          <b-button size="sm" @click="editUser(data.item)"><BIconPencilSquare /></b-button>
+          <b-button size="sm" @click="pickImage(data.item)"><BIconImage /></b-button>
+        </b-button-group>
       </template>
     </b-table>
 
@@ -17,18 +28,33 @@
                   v-model="page"
                   :per-page="perPage"
                   :total-rows="totalRows" />
+
+    <AddEditUserModal :userToEdit="selectedUser" ref="userModal" @change="update" />
+    <UserImageUploadModal :user="selectedUser" ref="userImageModal" @change="update(true)" />
+
+    <b-button variant="primary" @click="addUser"><BIconPersonPlus /> {{ $t('buttonAddUser') }}</b-button>
   </div>
 </template>
 
 <script>
+import CustomAvatar from '@/components/CustomAvatar'
+import AddEditUserModal from '@/components/modals/AddEditUserModal'
+import UserImageUploadModal from '@/components/modals/UserImageUploadModal'
+
 import { Cartesian, Area, Tooltip } from 'laue'
-import { getColor, getTextColor, PALETTE_HUTTON } from '@/plugins/color'
+import { BIconPencilSquare, BIconPersonPlus, BIconImage } from 'bootstrap-vue'
 
 export default {
   components: {
+    AddEditUserModal,
+    BIconPencilSquare,
+    BIconPersonPlus,
+    BIconImage,
+    CustomAvatar,
     Cartesian,
     Area,
-    Tooltip
+    Tooltip,
+    UserImageUploadModal
   },
   props: {
     getData: {
@@ -49,11 +75,21 @@ export default {
       page: 1,
       perPage: 10,
       totalRows: -1,
-      date: null
+      sortBy: null,
+      sortDesc: false,
+      date: null,
+      selectedUser: null,
+      apiCallTimestamp: null
     }
   },
   watch: {
     page: function () {
+      this.update()
+    },
+    sortBy: function () {
+      this.update()
+    },
+    sortDesc: function () {
       this.update()
     }
   },
@@ -62,18 +98,19 @@ export default {
       return {
         admin: {
           text: this.$t('typesUserAdmin'),
-          bgColor: getColor(PALETTE_HUTTON, 0),
-          fgColor: getTextColor(PALETTE_HUTTON, 0)
+          variant: 'success'
         },
         regular: {
           text: this.$t('typesUserRegular'),
-          bgColor: getColor(PALETTE_HUTTON, 1),
-          fgColor: getTextColor(PALETTE_HUTTON, 1)
+          variant: 'info'
         },
         reference: {
           text: this.$t('typesUserReference'),
-          bgColor: getColor(PALETTE_HUTTON, 2),
-          fgColor: getTextColor(PALETTE_HUTTON, 2)
+          variant: 'warning'
+        },
+        inactive: {
+          text: this.$t('typesUserInactive'),
+          variant: 'danger'
         }
       }
     },
@@ -92,6 +129,10 @@ export default {
     },
     fields: function () {
       return [{
+        key: 'icon',
+        sortable: false,
+        label: this.$t('tableColumnUserIcon')
+      }, {
         key: 'name',
         sortable: true,
         label: this.$t('tableColumnUserName')
@@ -108,14 +149,35 @@ export default {
         sortable: false,
         label: this.$t('tableColumnUserStats')
       }, {
+        key: 'lastLogin',
+        sortable: true,
+        label: this.$t('tableColumnUserLastLogin'),
+        formatter: value => value ? new Date(value).toLocaleDateString() : null
+      }, {
         key: 'createdOn',
         sortable: true,
         label: this.$t('tableColumnUserCreatedOn'),
         formatter: value => value ? new Date(value).toLocaleDateString() : null
+      }, {
+        key: 'actions',
+        sortable: false,
+        label: this.$t('tableColumnUserActions')
       }]
     }
   },
   methods: {
+    pickImage: function (user) {
+      this.selectedUser = user
+      this.$nextTick(() => this.$refs.userImageModal.show())
+    },
+    editUser: function (user) {
+      this.selectedUser = user
+      this.$nextTick(() => this.$refs.userModal.show())
+    },
+    addUser: function () {
+      this.selectedUser = null
+      this.$nextTick(() => this.$refs.userModal.show())
+    },
     getValues: function (userStats) {
       const result = this.yearMonths.map(ym => {
         if (userStats.stats[ym]) {
@@ -127,9 +189,19 @@ export default {
 
       return result
     },
-    update: function () {
-      this.getData(this.page, this.perPage, this.totalRows)
+    update: function (force = false) {
+      this.selectedUser = null
+      this.getData({
+        page: this.page,
+        limit: this.perPage,
+        prevCount: this.totalRows,
+        orderBy: this.sortBy,
+        ascending: this.sortDesc ? 0 : 1
+      })
         .then(result => {
+          if (force) {
+            this.apiCallTimestamp = Date.now()
+          }
           if (result && result.data) {
             this.items = result.data.data
             this.totalRows = result.data.count

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table hover striped responsive :fields="fields" :items="items">
+    <b-table hover striped responsive :fields="fields" :items="items" no-local-sorting :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
     </b-table>
 
     <b-pagination v-if="totalRows > perPage"
@@ -30,7 +30,9 @@ export default {
       items: [],
       page: 1,
       perPage: 10,
-      totalRows: -1
+      totalRows: -1,
+      sortBy: null,
+      sortDescending: null
     }
   },
   watch: {
@@ -82,13 +84,18 @@ export default {
   },
   methods: {
     update: function () {
-      this.getData(this.page, this.perPage, this.totalRows)
-        .then(result => {
-          if (result && result.data) {
-            this.items = result.data.data
-            this.totalRows = result.data.count
-          }
-        })
+      this.getData({
+        page: this.page,
+        limit: this.perPage,
+        prevCount: this.totalRows,
+        orderBy: this.sortBy,
+        ascending: this.sortDesc ? 0 : 1
+      }).then(result => {
+        if (result && result.data) {
+          this.items = result.data.data
+          this.totalRows = result.data.count
+        }
+      })
     }
   },
   mounted: function () {

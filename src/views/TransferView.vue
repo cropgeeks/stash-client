@@ -160,23 +160,21 @@ export default {
     updateTransferTable: function () {
       this.$refs.transferTable()
     },
-    getTransferData: function (page, limit, prevCount) {
-      return apiPostContainerTransferTable({
-        page: page,
-        limit: limit,
-        prevCount: prevCount,
-        filter: [{
-          column: 'sourceId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.containerFrom.containerId]
-        }, {
-          column: 'targetId',
-          comparator: 'equals',
-          operator: 'and',
-          values: [this.containerTo.containerId]
-        }]
-      })
+    getTransferData: function (params) {
+      const p = JSON.parse(JSON.stringify(params))
+      p.filter = [{
+        column: 'sourceId',
+        comparator: 'equals',
+        operator: 'and',
+        values: [this.containerFrom.containerId]
+      }, {
+        column: 'targetId',
+        comparator: 'equals',
+        operator: 'and',
+        values: [this.containerTo.containerId]
+      }]
+
+      return apiPostContainerTransferTable(p)
     }
   }
 }

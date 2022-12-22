@@ -1,5 +1,6 @@
 <template>
   <b-modal :ok-title="$t('buttonAdd')"
+           :cancel-title="$t('buttonCancel')"
            :title="$t('modalTitleAddTrial')"
            @ok.prevent="onSubmit"
            ref="addTrialModal">

@@ -29,7 +29,8 @@ import {
   ListGroupPlugin,
   ToastPlugin,
   FormFilePlugin,
-  AvatarPlugin
+  AvatarPlugin,
+  ButtonGroupPlugin
 } from 'bootstrap-vue'
 
 Vue.config.productionTip = false
@@ -37,6 +38,7 @@ Vue.config.productionTip = false
 Vue.use(AvatarPlugin)
 Vue.use(BadgePlugin)
 Vue.use(ButtonPlugin)
+Vue.use(ButtonGroupPlugin)
 Vue.use(CardPlugin)
 Vue.use(CollapsePlugin)
 Vue.use(FormPlugin)
