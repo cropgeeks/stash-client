@@ -10,7 +10,7 @@ ADD https://api.github.com/repos/cropgeeks/stash-client/git/refs/heads/main vers
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
     if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/stash-server.git /opt/stash-server ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/stash-server.git /opt/stash-server ; fi && \
-    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/stash-client.git /opt/stash-client ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/stash-client.git /opt/stash-client ; fi && \
+    if [ "$BRANCH" = "master" ] ; then git clone -b "main" --single-branch --depth 1 https://github.com/cropgeeks/stash-client.git /opt/stash-client ; else git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/cropgeeks/stash-client.git /opt/stash-client ; fi
 
 # Build the client code
 WORKDIR /opt/stash-client
