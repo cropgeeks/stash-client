@@ -12,6 +12,7 @@
         <b-form-input type="password" id="password" v-model="password" required />
       </b-form-group>
       <b-button size="lg" variant="primary" block type="submit"><BIconBoxArrowInRight /> {{ $t('buttonSignIn') }}</b-button>
+      <p v-if="error" :class="error.variant">{{ $t(error.text) }}</p>
     </b-form>
   </div>
 </template>
@@ -30,7 +31,8 @@ export default {
   data: function () {
     return {
       email: null,
-      password: null
+      password: null,
+      error: null
     }
   },
   methods: {
