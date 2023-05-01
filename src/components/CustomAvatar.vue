@@ -30,7 +30,14 @@ export default {
       'storeServerUrl'
     ]),
     url: function () {
-      const result = new URL(`user/${this.user.id}/img`, this.storeServerUrl)
+      let baseUrl = this.storeServerUrl
+      if (this.storeServerUrl.startsWith('.') || this.storeServerUrl.startsWith('/')) {
+        const anchor = document.createElement('a')
+        anchor.href = this.storeServerUrl
+        baseUrl = anchor.href
+      }
+
+      const result = new URL(`user/${this.user.id}/img`, baseUrl)
       result.searchParams.append('imageToken', this.storeToken.imageToken)
 
       if (this.searchParams) {

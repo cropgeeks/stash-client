@@ -42,7 +42,8 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    beforeEnter: requireAuth
   },
   {
     path: '/login',
@@ -52,17 +53,20 @@ const routes = [
   {
     path: '/import',
     name: 'import',
-    component: () => import(/* webpackChunkName: "import" */ '@/views/ImportView')
+    component: () => import(/* webpackChunkName: "import" */ '@/views/ImportView'),
+    beforeEnter: requireAuth
   },
   {
     path: '/transfer',
     name: 'transfer',
-    component: () => import(/* webpackChunkName: "transfer" */ '@/views/TransferView')
+    component: () => import(/* webpackChunkName: "transfer" */ '@/views/TransferView'),
+    beforeEnter: requireAuth
   },
   {
     path: '/predefine',
     name: 'predefine',
-    component: () => import(/* webpackChunkName: "predefine" */ '@/views/PredefineView')
+    component: () => import(/* webpackChunkName: "predefine" */ '@/views/PredefineView'),
+    beforeEnter: requireAuth
   },
   {
     path: '/user',
