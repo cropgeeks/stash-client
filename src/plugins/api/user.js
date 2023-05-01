@@ -7,6 +7,8 @@ const apiPostUserTable = (queryData, onSuccess, onError) => {
 
 const apiPatchUser = (user, onSuccess, onError) => apiAxios({ url: `user/${user.id}`, method: 'PATCH', data: user, success: onSuccess, error: onError })
 
+const apiPatchUserPassword = (userPasswords, onSuccess, onError) => apiAxios({ url: 'user/password', method: 'PATCH', data: userPasswords, success: onSuccess, error: onError })
+
 const apiPostUser = (user, onSuccess, onError) => apiAxios({ url: 'user', method: 'POST', data: user, success: onSuccess, error: onError })
 
 const apiPostUserImage = (userId, formData, onSuccess, onError) => apiForm({ url: `user/${userId}/img`, formData: formData, success: onSuccess, error: onError })
@@ -15,5 +17,6 @@ export {
   apiPostUserTable,
   apiPatchUser,
   apiPostUser,
-  apiPostUserImage
+  apiPostUserImage,
+  apiPatchUserPassword
 }

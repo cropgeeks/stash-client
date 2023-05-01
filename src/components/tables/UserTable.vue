@@ -152,7 +152,7 @@ export default {
         key: 'lastLogin',
         sortable: true,
         label: this.$t('tableColumnUserLastLogin'),
-        formatter: value => value ? new Date(value).toLocaleDateString() : null
+        formatter: value => value ? new Date(value).toLocaleString() : null
       }, {
         key: 'createdOn',
         sortable: true,

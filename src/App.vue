@@ -37,6 +37,7 @@
               <b-dropdown-item :to="{ name: 'user' }"><BIconPeople /> {{ $t('dropdownUsers') }}</b-dropdown-item>
               <b-dropdown-divider />
              </template>
+             <b-dropdown-item @click="$refs.changePasswordModal.show()"><BIconKey /> {{ $t('dropdownChangePassword') }}</b-dropdown-item>
              <b-dropdown-item @click="logout"><BIconBoxArrowRight /> {{ $t('dropdownSignOut') }}</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
@@ -58,15 +59,18 @@
         <p class="text-muted mt-3" v-if="$t('modalTextLoading')">{{ $t('modalTextLoading') }}</p>
       </div>
     </b-modal>
+
+    <ChangePasswordModal ref="changePasswordModal" />
   </div>
 </template>
 
 <script>
 import CustomAvatar from '@/components/CustomAvatar'
 import ContainerSearch from '@/components/ContainerSearch'
+import ChangePasswordModal from '@/components/modals/ChangePasswordModal'
 
 import { mapGetters } from 'vuex'
-import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight, BIconPeople } from 'bootstrap-vue'
+import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconKey, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight, BIconPeople } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { apiCheckToken, apiDeleteToken, userIsAtLeast } from './plugins/api/auth'
 
@@ -80,13 +84,15 @@ export default {
     BIconVolumeUp,
     BIconVolumeMute,
     BIconBoxArrowRight,
+    BIconKey,
     BIconSearch,
     BIconUiChecks,
     BIconBoxArrowInDownRight,
     BIconArrowLeftRight,
     BIconPeople,
     CustomAvatar,
-    ContainerSearch
+    ContainerSearch,
+    ChangePasswordModal
   },
   computed: {
     ...mapGetters([

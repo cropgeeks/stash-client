@@ -13,7 +13,7 @@
           <b-img class="p-3 transfer-arrow" fluid-grow :src="require('@/assets/img/transfer-arrow.svg')" />
           <div class="d-flex flex-row justify-content-between align-items-center mb-3">
             <CustomAvatar :user="{ id: event.userId, name: event.userName }" class="mr-2" />
-            <h6 class="p-0 m-0">{{ $t('modalTextContainerHistoryTransferEventCount', { count: event.containerCount, date: new Date(event.date).toLocaleDateString(), name: event.userName }) }}</h6>
+            <h6 class="p-0 m-0">{{ $t('modalTextContainerHistoryTransferEventCount', { count: event.containerCount, date: new Date(event.timestamp).toLocaleString(), name: event.userName }) }}</h6>
           </div>
           <b-button @click="selectEvent(event)"><BIconTable /> {{ $t('buttonShowTable') }}</b-button>
         </b-col>
@@ -107,7 +107,7 @@ export default {
         column: 'createdOn',
         comparator: 'contains',
         operator: 'and',
-        values: [this.selectedEvent.date.substring(0, 10)]
+        values: [this.selectedEvent.timestamp.substring(0, 10)]
       }, {
         column: 'userId',
         comparator: 'equals',
@@ -123,7 +123,7 @@ export default {
         limit: this.perPage,
         prevCount: this.totalRows,
         filter: this.getFilter(),
-        orderBy: 'date',
+        orderBy: 'timestamp',
         ascending: 0
       }, result => {
         if (result && result.data) {

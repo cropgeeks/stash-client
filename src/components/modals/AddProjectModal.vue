@@ -11,6 +11,9 @@
       <b-form-group :label="$t('formLabelAddProjectDescription')" label-for="description">
         <b-form-textarea :rows="3" id="description" v-model="description" :state="formState.description" />
       </b-form-group>
+      <b-form-group :label="$t('formLabelAddProjectUser')" label-for="user">
+        <b-form-select :options="userOptions" id="user" v-model="user" :state="formState.user" />
+      </b-form-group>
       <b-form-group :label="$t('formLabelAddProjectStartDate')" label-for="startDate">
         <b-form-input id="startDate" type="date" v-model="startDate" :state="formState.startDate" />
       </b-form-group>
@@ -23,6 +26,8 @@
 
 <script>
 import { apiPostProject } from '@/plugins/api/project'
+import { apiPostUserTable } from '@/plugins/api/user'
+import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
 export default {
   data: function () {
     return {
@@ -30,12 +35,29 @@ export default {
       description: null,
       startDate: null,
       endDate: null,
+      user: null,
+      users: [],
       formValidated: null,
       formState: {
         name: null,
         description: null,
         startDate: null,
-        endDate: null
+        endDate: null,
+        user: null
+      }
+    }
+  },
+  computed: {
+    userOptions: function () {
+      if (this.users) {
+        return this.users.map(u => {
+          return {
+            value: u,
+            text: `${u.name} (${u.userType})`
+          }
+        })
+      } else {
+        return []
       }
     }
   },
@@ -47,7 +69,8 @@ export default {
         name: this.name !== null && this.name.length > 0 && this.name.length < 255,
         description: true,
         startDate: true,
-        endDate: true
+        endDate: true,
+        user: this.user !== undefined && this.user !== null
       }
 
       if (this.startDate && this.endDate) {
@@ -65,7 +88,8 @@ export default {
           name: this.name,
           description: this.description,
           startDate: this.startDate ? new Date(this.startDate) : null,
-          endDate: this.endDate ? new Date(this.endDate) : null
+          endDate: this.endDate ? new Date(this.endDate) : null,
+          userId: this.user ? this.user.id : null
         }, newProject => {
           this.$emit('project-added', newProject)
           this.hide()
@@ -80,14 +104,37 @@ export default {
       this.description = null
       this.startDate = null
       this.endDate = null
+      this.user = null
+      this.users = []
       this.formValidated = null
       this.formState = {
         name: null,
         description: null,
         startDate: null,
-        endDate: null
+        endDate: null,
+        user: null
       }
       this.$nextTick(() => this.$refs.addProjectModal.show())
+
+      apiPostUserTable({
+        page: 1,
+        limit: MAX_JAVA_INTEGER,
+        orderBy: 'name',
+        ascending: 1
+      }, result => {
+        if (result && result.data && result.data.length > 0) {
+          this.users = result.data
+
+          if (result && result.data.length > 0) {
+            this.user = result.data[0]
+          } else {
+            this.user = null
+          }
+        } else {
+          this.users = []
+          this.user = null
+        }
+      })
     },
     /**
      * Hides the modal dialog

@@ -91,7 +91,7 @@ export default {
         key: 'createdOn',
         sortable: true,
         label: this.$t('tableColumnTransferLogCreatedOn'),
-        formatter: value => value ? new Date(value).toLocaleDateString() : null
+        formatter: value => value ? new Date(value).toLocaleString() : null
       }]
     }
   },
