@@ -45,6 +45,15 @@ export default {
     }
   },
   methods: {
+    selectTrial: function (trialId) {
+      if (this.trials) {
+        const match = this.trials.find(p => p.value.id === trialId)
+
+        if (match) {
+          this.selectedTrial = match.value
+        }
+      }
+    },
     getTrials: function (newProject) {
       apiPostTrialTable({
         page: 1,

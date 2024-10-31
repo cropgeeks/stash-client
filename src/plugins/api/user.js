@@ -13,10 +13,13 @@ const apiPostUser = (user, onSuccess, onError) => apiAxios({ url: 'user', method
 
 const apiPostUserImage = (userId, formData, onSuccess, onError) => apiForm({ url: `user/${userId}/img`, formData: formData, success: onSuccess, error: onError })
 
+const apiDeleteUser = (userId, onSuccess, onError) => apiAxios({ url: `user/${userId}`, method: 'DELETE', success: onSuccess, error: onError })
+
 export {
   apiPostUserTable,
   apiPatchUser,
   apiPostUser,
   apiPostUserImage,
-  apiPatchUserPassword
+  apiPatchUserPassword,
+  apiDeleteUser
 }

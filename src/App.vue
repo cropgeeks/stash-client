@@ -20,6 +20,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
           <b-nav-item @click="toggleAudioFeedback"><BIconVolumeUp v-if="storeAudioFeedbackEnabled" /><BIconVolumeMute v-else /></b-nav-item>
+          <b-nav-item :to="{ name: 'about' }"><BIconInfoCircle /> {{ $t('menuAbout') }}</b-nav-item>
           <b-nav-item-dropdown right>
             <template #button-content>
               <BIconFlag /><span> {{ $t('menuLocale') }}</span>
@@ -70,7 +71,7 @@ import ContainerSearch from '@/components/ContainerSearch'
 import ChangePasswordModal from '@/components/modals/ChangePasswordModal'
 
 import { mapGetters } from 'vuex'
-import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconSearch, BIconKey, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight, BIconPeople } from 'bootstrap-vue'
+import { BIconFlag, BIconVolumeUp, BIconVolumeMute, BIconBoxArrowRight, BIconInfoCircle, BIconSearch, BIconKey, BIconUiChecks, BIconBoxArrowInDownRight, BIconArrowLeftRight, BIconPeople } from 'bootstrap-vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
 import { apiCheckToken, apiDeleteToken, userIsAtLeast } from './plugins/api/auth'
 
@@ -82,6 +83,7 @@ export default {
   components: {
     BIconFlag,
     BIconVolumeUp,
+    BIconInfoCircle,
     BIconVolumeMute,
     BIconBoxArrowRight,
     BIconKey,

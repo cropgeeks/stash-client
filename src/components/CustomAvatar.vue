@@ -38,7 +38,9 @@ export default {
       }
 
       const result = new URL(`user/${this.user.id}/img`, baseUrl)
-      result.searchParams.append('imageToken', this.storeToken.imageToken)
+      if (this.storeToken) {
+        result.searchParams.append('imageToken', this.storeToken.imageToken)
+      }
 
       if (this.searchParams) {
         Object.keys(this.searchParams).filter(k => this.searchParams[k] !== undefined && this.searchParams[k] !== null).forEach(k => result.searchParams.append(k, this.searchParams[k]))

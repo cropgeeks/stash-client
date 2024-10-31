@@ -35,6 +35,15 @@ export default {
     }
   },
   methods: {
+    selectProject: function (projectId) {
+      if (this.projects) {
+        const match = this.projects.find(p => p.value.id === projectId)
+
+        if (match) {
+          this.selectedProject = match.value
+        }
+      }
+    },
     getProjects: function (newProject) {
       apiPostProjectTable({
         page: 1,

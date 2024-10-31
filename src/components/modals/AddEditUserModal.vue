@@ -8,16 +8,16 @@
     <UserCard class="mb-4" :user="tempUser" />
     <b-form @submit.prevent="onSubmit" novalidate>
       <b-form-group :label="$t('formLabelUserName')" label-for="username">
-        <b-form-input id="username" v-model="name" />
+        <b-form-input id="username" v-model="name" :state="formState.name" />
       </b-form-group>
       <b-form-group :label="$t('formLabelUserEmail')" label-for="email">
-        <b-form-input id="email" v-model="email" :disabled="isEdit" />
+        <b-form-input id="email" type="email" v-model="email" :disabled="isEdit" :state="formState.email" />
       </b-form-group>
       <b-form-group :label="$t('formLabelUserPassword')" label-for="password">
-        <b-form-input id="password" type="password" v-model="password" :disabled="isEdit" />
+        <b-form-input id="password" type="password" v-model="password" :disabled="isEdit || (userType === 'reference')" :state="formState.password" />
       </b-form-group>
       <b-form-group :label="$t('formLabelUserType')" label-for="userType">
-        <b-form-select id="userType" :options="userTypes" v-model="userType" />
+        <b-form-select id="userType" :options="userTypes" v-model="userType" :state="formState.userType" />
       </b-form-group>
 
       <p class="text-danger" v-if="errorMessage">{{ $t(errorMessage) }}</p>
@@ -55,6 +55,13 @@ export default {
         password: null
       },
       errorMessage: null
+    }
+  },
+  watch: {
+    userType: function (newValue) {
+      if (newValue === 'reference') {
+        this.password = null
+      }
     }
   },
   computed: {
@@ -96,7 +103,7 @@ export default {
       this.formState = {
         name: this.name !== null && this.name.length > 0 && this.name.length < 255,
         email: this.isEdit ? true : (this.email !== null && this.email.length > 0 && this.email.length < 255),
-        password: this.isEdit ? true : (this.password !== null && this.password.length > 0),
+        password: (this.isEdit || this.userType === 'reference') ? true : (this.password !== null && this.password.length > 0),
         userType: this.userType !== null
       }
 

@@ -1,6 +1,12 @@
 <template>
   <div>
-    <b-table hover striped responsive :fields="fields" :items="items" no-local-sorting :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
+    <b-button variant="primary" @click="addUser"><BIconPersonPlus /> {{ $t('buttonAddUser') }}</b-button>
+
+    <b-form-group class="my-3" :label="$t('formLabelUserSearch')" :description="$t('formDescriptionUserSearch')" label-for="user-search">
+      <b-input type="search" id="user-search" v-model="searchTerm" trim lazy />
+    </b-form-group>
+
+    <b-table class="my-3" hover striped responsive :fields="fields" :items="items" no-local-sorting :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
       <template v-slot:cell(stats)="data">
         <Cartesian :width="200" :height="50" :data="getValues(data.item)">
           <Area animated prop="value" />
@@ -18,8 +24,9 @@
 
       <template v-slot:cell(actions)="data">
         <b-button-group>
-          <b-button size="sm" @click="editUser(data.item)"><BIconPencilSquare /></b-button>
-          <b-button size="sm" @click="pickImage(data.item)"><BIconImage /></b-button>
+          <b-button size="sm" v-b-tooltip="$t('modalTitleEditUser')" @click="editUser(data.item)"><BIconPencilSquare /></b-button>
+          <b-button size="sm" v-b-tooltip="$t('modalTitleUploadUserImage')" @click="pickImage(data.item)"><BIconImage /></b-button>
+          <b-button size="sm" v-b-tooltip="$t('modalTitleConfirmDeleteUser')" variant="outline-danger" @click="deleteUser(data.item)"><BIconTrash /></b-button>
         </b-button-group>
       </template>
     </b-table>
@@ -29,10 +36,10 @@
                   :per-page="perPage"
                   :total-rows="totalRows" />
 
+    <b-button variant="primary" @click="addUser"><BIconPersonPlus /> {{ $t('buttonAddUser') }}</b-button>
+
     <AddEditUserModal :userToEdit="selectedUser" ref="userModal" @change="update" />
     <UserImageUploadModal :user="selectedUser" ref="userImageModal" @change="update(true)" />
-
-    <b-button variant="primary" @click="addUser"><BIconPersonPlus /> {{ $t('buttonAddUser') }}</b-button>
   </div>
 </template>
 
@@ -41,8 +48,10 @@ import CustomAvatar from '@/components/CustomAvatar'
 import AddEditUserModal from '@/components/modals/AddEditUserModal'
 import UserImageUploadModal from '@/components/modals/UserImageUploadModal'
 
+import { apiDeleteUser } from '@/plugins/api/user'
+
 import { Cartesian, Area, Tooltip } from 'laue'
-import { BIconPencilSquare, BIconPersonPlus, BIconImage } from 'bootstrap-vue'
+import { BIconPencilSquare, BIconPersonPlus, BIconTrash, BIconImage } from 'bootstrap-vue'
 
 export default {
   components: {
@@ -50,6 +59,7 @@ export default {
     BIconPencilSquare,
     BIconPersonPlus,
     BIconImage,
+    BIconTrash,
     CustomAvatar,
     Cartesian,
     Area,
@@ -71,6 +81,7 @@ export default {
   },
   data: function () {
     return {
+      searchTerm: null,
       items: [],
       page: 1,
       perPage: 10,
@@ -90,6 +101,9 @@ export default {
       this.update()
     },
     sortDesc: function () {
+      this.update()
+    },
+    searchTerm: function () {
       this.update()
     }
   },
@@ -157,7 +171,7 @@ export default {
         key: 'createdOn',
         sortable: true,
         label: this.$t('tableColumnUserCreatedOn'),
-        formatter: value => value ? new Date(value).toLocaleDateString() : null
+        formatter: value => value ? new Date(value).toLocaleString() : null
       }, {
         key: 'actions',
         sortable: false,
@@ -178,6 +192,17 @@ export default {
       this.selectedUser = null
       this.$nextTick(() => this.$refs.userModal.show())
     },
+    deleteUser: function (user) {
+      this.$bvModal.msgBoxConfirm(this.$t('modalTextConfirmDeleteUser'), {
+        title: this.$t('modalTitleConfirmDeleteUser'),
+        okTitle: this.$t('buttonYes'),
+        cancelTitle: this.$t('buttonNo')
+      }).then(value => {
+        if (value) {
+          apiDeleteUser(user.id, () => this.update())
+        }
+      })
+    },
     getValues: function (userStats) {
       const result = this.yearMonths.map(ym => {
         if (userStats.stats[ym]) {
@@ -191,12 +216,31 @@ export default {
     },
     update: function (force = false) {
       this.selectedUser = null
+
+      let filter = null
+
+      if (this.searchTerm && this.searchTerm.length > 0) {
+        this.totalRows = 0
+        filter = [{
+          column: 'name',
+          operator: 'or',
+          comparator: 'contains',
+          values: [this.searchTerm]
+        }, {
+          column: 'emailAddress',
+          operator: 'or',
+          comparator: 'contains',
+          values: [this.searchTerm]
+        }]
+      }
+
       this.getData({
         page: this.page,
         limit: this.perPage,
         prevCount: this.totalRows,
         orderBy: this.sortBy,
-        ascending: this.sortDesc ? 0 : 1
+        ascending: this.sortDesc ? 0 : 1,
+        filter: filter
       })
         .then(result => {
           if (force) {

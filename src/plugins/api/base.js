@@ -33,7 +33,7 @@ const handleError = (error) => {
       break
     case 401:
       message = i18n.t('httpErrorFourOOne')
-      store.dispatch('setToken', null)
+      store.commit('ON_TOKEN_CHANGED', null)
       // We're using the emitter here rather than directly accessing the router to prevent a circular dependency
       emitter.emit('route', { name: 'login' })
       return

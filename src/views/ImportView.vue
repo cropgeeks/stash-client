@@ -18,8 +18,8 @@
         </b-col>
         <b-col cols=12 md=6>
           <ContainerTypeSelector @container-type-selected="ct => { selectedContainerType = ct }" />
-          <ProjectSelector @project-selected="p => { selectedProject = p }" />
-          <TrialSelector @trial-selected="t => { selectedTrial = t }" :projectId="selectedProject ? selectedProject.id : null" />
+          <ProjectSelector @project-selected="p => { selectedProject = p }" ref="projectSelector" />
+          <TrialSelector @trial-selected="t => { selectedTrial = t }" :projectId="selectedProject ? selectedProject.id : null" ref="trialSelector" />
         </b-col>
       </b-row>
 
@@ -161,6 +161,12 @@ export default {
     setContainer: function (container) {
       if (container.containerId) {
         this.targetContainer = container
+        if (container.projectId) {
+          this.$refs.projectSelector.selectProject(container.projectId)
+        }
+        if (container.trialId) {
+          this.$refs.trialSelector.selectTrial(container.trialId)
+        }
         this.items = []
       }
     },

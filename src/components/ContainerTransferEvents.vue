@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-card v-for="event in items" :key="`${event.sourceId}-${event.targetId}-${event.userId}-${event.date}`" class="mb-3">
+    <b-card v-for="event in items" :key="`${event.eventId}-${event.date}`" class="mb-3" :text-variant="(selectedEvent && selectedEvent.eventId === event.eventId) ? 'light' : null" :bg-variant="(selectedEvent && selectedEvent.eventId === event.eventId) ? 'primary' : null">
       <b-row class="d-flex justify-content-between">
         <b-col cols=12 md=4 class="d-flex flex-column align-items-center justify-content-center">
           <template v-if="event.sourceBarcode">
