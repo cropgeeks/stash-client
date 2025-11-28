@@ -9,7 +9,7 @@ export interface UserTypeConfig {
   icon: string
 }
 
-const userTypeConfig = ref<{ [index: string]: UserTypeConfig }>({
+const userTypeConfig: { [index: string]: UserTypeConfig } = {
   admin: {
     key: 'admin',
     text: 'typesUserAdmin',
@@ -34,7 +34,7 @@ const userTypeConfig = ref<{ [index: string]: UserTypeConfig }>({
     icon: mdiAccountLock,
     color: 'error',
   },
-})
+}
 
 export {
   stashVersion,

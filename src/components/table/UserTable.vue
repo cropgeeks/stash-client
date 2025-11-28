@@ -27,7 +27,7 @@
       <CustomAvatar :user="{ id: item.id, name: item.name }" :search-params="{ timestamp: apiCallTimestamp }" />
     </template>
     <template #item.userType="{ item }">
-      <v-chip class="w-100" label :text="$t(userTypeConfig[item.userType].text)" :color="userTypeConfig[item.userType].color" :prepend-icon="userTypeConfig[item.userType].icon" />
+      <v-chip label :text="$t(userTypeConfig[item.userType].text)" :color="userTypeConfig[item.userType].color" :prepend-icon="userTypeConfig[item.userType].icon" />
     </template>
     <template #item.stats="{ item }">
       <v-sparkline
@@ -56,7 +56,7 @@
     :notify="onSendUser"
     :fields="userFields"
     :max-width="640"
-    @items-changed="refresh"
+    @items-changed="update"
     ref="userModal"
     v-if="selectedItem"
   >
@@ -72,7 +72,7 @@
     :notify="onUploadUserImage"
     :fields="userImageFields"
     :max-width="640"
-    @items-changed="refresh"
+    @items-changed="update"
     ref="userImageModal"
     v-if="imageUploadTemp"
   >
@@ -88,7 +88,7 @@
     :notify="onUpdateUserPassword"
     :fields="userPasswordFields"
     :max-width="640"
-    @items-changed="refresh"
+    @items-changed="update"
     ref="userPasswordModal"
     v-if="userPasswordUpdate"
   />
@@ -280,6 +280,10 @@
     })
   }
 
+  function refresh () {
+    runSearch()
+  }
+
   function onSendUser () {
     return new Promise<boolean>((resolve, reject) => {
       if (selectedItem.value) {
@@ -335,7 +339,7 @@
     })
   }
 
-  function refresh () {
+  function update () {
     totalItems.value = 0
     search.value = `${Date.now()}`
   }
@@ -378,7 +382,7 @@
       okVariant: 'error',
       callback: (result: boolean) => {
         if (result === true) {
-          apiDeleteUser(user.id).then(() => refresh())
+          apiDeleteUser(user.id).then(() => update())
         }
       },
     })
@@ -445,4 +449,8 @@
       }
     })
   }
+
+  defineExpose({
+    refresh,
+  })
 </script>
