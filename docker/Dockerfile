@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:22.11-alpine3.20 AS builder
 
 LABEL maintainer="sebastian.raubach@hutton.ac.uk"
 
