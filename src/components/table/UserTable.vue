@@ -42,7 +42,7 @@
     <template #item.actions="{ item }">
       <v-btn-group density="compact">
         <v-btn class="px-5" :icon="mdiPencil" @click="editUser(item)" v-tooltip:top="$t('modalTitleEditUser')" />
-        <v-btn class="px-5" :icon="mdiKeyChange" @click="editPassword(item)" v-tooltip:top="$t('dropdownChangePassword')" />
+        <v-btn class="px-5" :icon="mdiKeyChange" @click="editPassword(item)" :disabled="item.userType === UsersUserType.reference" v-tooltip:top="$t('dropdownChangePassword')" />
         <v-btn class="px-5" :icon="mdiImagePlus" @click="editUserImage(item)" v-tooltip:top="$t('modalTitleUploadUserImage')" />
         <v-btn class="px-5" :icon="mdiDelete" @click="deleteUser(item)" color="error" v-tooltip:top="$t('modalTitleConfirmDeleteUser')" />
       </v-btn-group>
