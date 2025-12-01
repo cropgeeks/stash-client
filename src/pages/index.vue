@@ -12,7 +12,7 @@
         <v-img
           class="ma-3"
           height="200"
-          src="/img/stash-w-text-shapes-dark.svg'"
+          src="/img/stash-w-text-shapes-dark.svg"
           v-if="store.storeIsDarkMode"
         />
         <v-img
