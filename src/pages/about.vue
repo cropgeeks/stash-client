@@ -12,7 +12,14 @@
         <v-img
           class="ma-3"
           height="200"
-          :src="store.storeIsDarkMode ? '/img/stash-w-text-shapes-dark.svg' : '/img/stash-w-text-shapes.svg'"
+          src="/img/stash-w-text-shapes-dark.svg'"
+          v-if="store.storeIsDarkMode"
+        />
+        <v-img
+          class="ma-3"
+          height="200"
+          src="/img/stash-w-text-shapes.svg"
+          v-else
         />
       </div>
     </v-card>
