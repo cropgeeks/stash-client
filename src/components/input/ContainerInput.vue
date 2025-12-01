@@ -117,6 +117,10 @@
         nextTick(() => setMatch())
 
         showCamera.value = false
+
+        nextTick(() => {
+          bottomSheetVisible.value = false
+        })
       }
     }
   }

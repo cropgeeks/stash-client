@@ -20,6 +20,7 @@
     striped="odd"
     hover
     :search="search"
+    @click:row="handleClick"
     item-value="containerId"
     @update:options="loadItems"
   >
@@ -33,6 +34,15 @@
       <v-chip label :text="item.containerIsActive" :color="item.containerIsActive ? 'success' : 'warning'" />
     </template>
   </v-data-table-server>
+
+  <v-bottom-sheet
+    v-model="bottomSheetVisible"
+    v-if="selectedContainer"
+    inset
+    max-height="75vh"
+  >
+    <ContainerCard v-model="selectedContainer" />
+  </v-bottom-sheet>
 </template>
 
 <script setup lang="ts">
@@ -59,6 +69,9 @@
   const totalItems = ref(0)
   const filters = ref<FilterGroup[]>([])
   const containerTypes = ref<ContainerTypes[]>([])
+  const selectedContainer = ref<ViewTableContainers>()
+
+  const bottomSheetVisible = ref(false)
 
   const headers = computed(() => {
     return [{
@@ -156,6 +169,14 @@
         totalItems.value = result.count
         loading.value = false
       }
+    })
+  }
+
+  function handleClick (event: Event, row: any) {
+    selectedContainer.value = row.item
+
+    nextTick(() => {
+      bottomSheetVisible.value = true
     })
   }
 
