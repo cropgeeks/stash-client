@@ -12,12 +12,14 @@
         <v-img
           class="ma-3"
           height="200"
+          min-width="200"
           src="/img/stash-w-text-shapes-dark.svg"
           v-if="store.storeIsDarkMode"
         />
         <v-img
           class="ma-3"
           height="200"
+          min-width="200"
           src="/img/stash-w-text-shapes.svg"
           v-else
         />
