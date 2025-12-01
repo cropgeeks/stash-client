@@ -24,7 +24,7 @@ export interface StoreContent {
 type UserState = { [key: number]: StoreContent }
 
 const defaultUserState: StoreContent = {
-  theme: 'system',
+  theme: 'light',
   systemTheme: 'dark',
   locale: 'en-GB',
   audioFeedbackEnabled: true,
