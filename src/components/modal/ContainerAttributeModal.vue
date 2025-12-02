@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-  import { apiGetContainerAttributes } from '@/plugins/api/container';
+  import { apiGetContainerAttributes } from '@/plugins/api/container'
   import type { ContainerAttributes, ViewTableContainers } from '@/plugins/types/stash'
   import { mdiClose } from '@mdi/js'
 

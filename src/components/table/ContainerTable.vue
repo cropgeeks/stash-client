@@ -52,7 +52,7 @@
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
   import { apiPostContainerTypeTable } from '@/plugins/api/container'
   import { type ViewTableContainers, type PaginatedRequest, type PaginatedResult, type FilterGroup, FilterComparator, FilterOperator, type ContainerTypes } from '@/plugins/types/stash'
-import { getContainerDescription } from '@/plugins/util'
+  import { getContainerDescription } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { mdiArrowRight, mdiMagnify } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
