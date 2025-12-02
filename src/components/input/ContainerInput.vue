@@ -19,13 +19,13 @@
       </template>
     </v-text-field>
 
-    <v-list v-if="potentialMatches && potentialMatches.length > 0">
+    <v-list v-if="potentialMatches && potentialMatches.length > 0" max-height="50vh">
       <v-list-subheader>{{ $t('widgetContainerSearchPotentialMatches') }}</v-list-subheader>
       <v-list-item
         v-for="item in potentialMatches"
         :key="`potential-match-${item.containerId}`"
         :title="item.containerBarcode"
-        :subtitle="item.containerDescription"
+        :subtitle="getContainerDescription(item)"
         @click="selectItem(item)"
       />
     </v-list>
@@ -66,6 +66,7 @@
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
 
   import emitter from 'tiny-emitter/instance'
+  import { getContainerDescription } from '@/plugins/util'
 
   const { t } = useI18n()
 
@@ -140,8 +141,8 @@
           comparator: FilterComparator.equals,
           values: [containerSearch.value || ''],
         }, {
-          column: 'containerDescription',
-          comparator: FilterComparator.contains,
+          column: 'containerAttributes',
+          comparator: FilterComparator.jsonSearch,
           values: [containerSearch.value || ''],
         }],
         operator: FilterOperator.or,
@@ -165,7 +166,6 @@
         } else {
           container.value = {
             containerBarcode: t('widgetContainerNoMatchTitle'),
-            containerDescription: t('widgetContainerNoMatchSubtitle'),
             containerTypeId: -1,
           }
         }

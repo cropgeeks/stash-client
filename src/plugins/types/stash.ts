@@ -10,10 +10,10 @@ export interface Attributes {
     updatedOn: Date;
 }
 
-export interface ContainerAttributes {
-    attributeId: number;
+export interface ContainerAttributes extends Serializable {
+    id: number;
     containerId: number;
-    attributeValue: string;
+    attributeValues: { [index: string]: string };
     createdOn: Date;
     updatedOn: Date;
 }
@@ -30,7 +30,6 @@ export interface ContainerTypes {
 export interface Containers {
     id?: number;
     barcode: string;
-    description: string;
     containerTypeId: number;
     parentContainerId?: number;
     isActive?: boolean;
@@ -91,11 +90,10 @@ export interface Users {
 export interface ViewTableContainers {
     containerId?: number;
     containerBarcode: string;
-    containerDescription?: string;
     containerTypeId: number;
+    containerAttributes?: ContainerAttributeTimeline[];
     parentId?: number;
     parentBarcode?: string;
-    parentDescription?: string;
     parentContainerTypeId?: number;
     containerIsActive?: boolean;
     trialId?: number;
@@ -104,9 +102,13 @@ export interface ViewTableContainers {
     projectId?: number;
     projectName?: string;
     projectDescription?: string;
-    containerAttributes?: ContainerAttributeValue[];
     subContainerCount?: number;
     createdOn?: Date;
+}
+
+export interface ContainerAttributeTimeline {
+    date: string;
+    attributeValues: { [index: string]: string };
 }
 
 export interface ViewTableTransferEvents {
@@ -128,13 +130,13 @@ export interface ViewTableTransfers {
     transferEventId: string;
     containerId: number;
     containerBarcode: string;
-    containerDescription: string;
+    containerAttributes?: ContainerAttributeTimeline[];
     sourceId: number;
     sourceBarcode: string;
-    sourceDescription: string;
+    sourceAttributes?: ContainerAttributeTimeline[];
     targetId: number;
     targetBarcode: string;
-    targetDescription: string;
+    targetAttributes?: ContainerAttributeTimeline[];
     userId: number;
     userName: string;
     createdOn: Date;

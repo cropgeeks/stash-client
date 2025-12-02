@@ -67,6 +67,8 @@
   import { coreStore } from '@/stores/app'
   import { mdiPlus } from '@mdi/js'
 
+  import emitter from 'tiny-emitter/instance'
+
   const store = coreStore()
 
   const model = defineModel<ContainerTypes>()
@@ -108,6 +110,8 @@
           newContainerType.value = undefined
           update(result)
           resolve(true)
+
+          emitter.emit('update-container-types')
         })
       } else {
         reject()

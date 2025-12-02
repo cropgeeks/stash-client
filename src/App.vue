@@ -136,6 +136,7 @@
   import { apiDeleteToken } from '@/plugins/api/auth'
   import { apiPostContainerTypeTable } from '@/plugins/api/container'
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
+  import { apiGetAttributes } from '@/plugins/api/attribute'
 
   let plausible: any
   let textSynth: SpeechSynthesis | undefined = undefined
@@ -250,6 +251,23 @@
     }
   }
 
+  function updateContainerTypes () {
+    apiPostContainerTypeTable({
+      page: 1,
+      limit: MAX_JAVA_INTEGER,
+    }, result => {
+      if (result && result.data) {
+        store.setContainerTypes(result.data)
+      } else {
+        store.setContainerTypes([])
+      }
+    })
+  }
+
+  function updateContainerAttributes () {
+    apiGetAttributes(result => store.setContainerAttributes(result))
+  }
+
   // Listen for theme changes in the store
   watchEffect(() => {
     const str = isDark.value ? 'dark' : 'light'
@@ -262,33 +280,29 @@
     loadLanguageAsync(store.storeLocale)
   })
 
+  watch(() => store.storeAudioFeedbackEnabled, async () => initTts())
+
   onBeforeMount(() => {
     loadLanguageAsync(store.storeLocale)
     store.setServerUrl(baseUrl)
 
-    apiPostContainerTypeTable({
-      page: 1,
-      limit: MAX_JAVA_INTEGER,
-    }, result => {
-      if (result && result.data) {
-        store.setContainerTypes(result.data)
-      } else {
-        store.setContainerTypes([])
-      }
-    })
+    updateContainerTypes()
+    updateContainerAttributes()
 
     emitter.on('show-snackbar', showSnackbar)
     emitter.on('show-loading', showLoading)
+    emitter.on('update-container-types', updateContainerTypes)
+    emitter.on('update-container-attributes', updateContainerAttributes)
     emitter.on('tts', tts)
   })
 
   onMounted(() => initTts())
 
-  watch(() => store.storeAudioFeedbackEnabled, async () => initTts())
-
   onBeforeUnmount(() => {
     emitter.off('show-snackbar', showSnackbar)
     emitter.off('show-loading', showLoading)
+    emitter.off('update-container-types', updateContainerTypes)
+    emitter.off('update-container-attributes', updateContainerAttributes)
     emitter.off('tts', tts)
   })
 </script>

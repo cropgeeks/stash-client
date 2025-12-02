@@ -61,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+  import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
   import { apiPostContainerTransferEventTable } from '@/plugins/api/container'
   import { FilterComparator, FilterOperator, type FilterGroup, type ViewTableTransferEvents } from '@/plugins/types/stash'
   import { coreStore } from '@/stores/app'
@@ -83,7 +84,7 @@
   function update () {
     apiPostContainerTransferEventTable({
       page: page.value,
-      limit: perPage.value,
+      limit: MAX_JAVA_INTEGER,
       prevCount: totalCount.value || -1,
       filters: getFilter(),
       orderBy: 'timestamp',

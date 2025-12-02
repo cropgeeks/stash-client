@@ -1,5 +1,5 @@
 import { apiAxios, type ErrorHandler, type ResponseHandler } from '@/plugins/api/base'
-import type { ContainerImport, ContainerTransfer, ContainerTypes, PaginatedRequest, PaginatedResult, ViewTableContainers, ViewTableTransferEvents, ViewTableTransfers } from '@/plugins/types/stash'
+import type { Attributes, ContainerAttributes, ContainerAttributeTimeline, ContainerImport, ContainerTransfer, ContainerTypes, PaginatedRequest, PaginatedResult, ViewTableContainers, ViewTableTransferEvents, ViewTableTransfers } from '@/plugins/types/stash'
 
 function apiPostContainers (data: ViewTableContainers[], onSuccess?: ResponseHandler<number[]>, onError?: ErrorHandler) {
   return apiAxios({ url: 'container', method: 'POST', data, success: onSuccess, error: onError })
@@ -45,8 +45,13 @@ function apiGetContainerClear (containerId: number, onSuccess?: ResponseHandler<
   return apiAxios({ url: `container/${containerId}/clear`, method: 'GET', data: undefined, success: onSuccess, error: onError })
 }
 
+function apiGetContainerAttributes (containerId: number, onSuccess?: ResponseHandler<ContainerAttributes[]>, onError?: ErrorHandler) {
+  return apiAxios({ url: `container/${containerId}/attribute`, method: 'GET', data: undefined, success: onSuccess, error: onError })
+}
+
 export {
   apiPostContainers,
+  apiGetContainerAttributes,
   apiPostContainersToParent,
   apiPostContainerTable,
   apiPostContainerTransfer,

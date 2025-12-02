@@ -7,6 +7,7 @@
   "buttonContainerClear": "Leeren",
   "buttonContainerTransferHistory": "Zeige Verlauf",
   "buttonContainerContent": "Inhalt anzeigen",
+  "buttonContainerAttributes": "Eigenschaften",
   "buttonImport": "Importieren",
   "buttonLoad": "Daten laden",
   "buttonMakeTransfer": "Übertragung starten",
@@ -111,6 +112,7 @@
   "modalTitleContainerContent": "Behälter-Inhalt",
   "modalTextContainerContent": "Die untenstehende Tabelle zeigt alle Elemente an die sich aktuell in diesem Behälter befinden.",
   "modalTitleContainerHistory": "Übertragungsverlauf",
+  "modalTitleContainerAttributes": "Behältereigenschaften",
   "modalTitleAddContainerTypes": "Behältertyp hinzuzufügen",
   "modalTitleAddProject": "Projekt hinzuzufügen",
   "modalTitleAddTrial": "Versuch hinzuzufügen",
@@ -138,7 +140,7 @@
   "pageHomeCardSearchSubtitle": "Suche nach einem bestimmten Behälter um schnell Informationen über diesen zu erhalten.",
   "pageHomeCardPredefineTitle": "Neue Behälter importieren",
   "pageHomeCardPredefineSubtitle": "Bereite Behälter vor bevor sie in das System gescannt/eingegeben werden.",
-  "pageHomeWelcome": "Willkommen zu STASH - Dem Seed Transfer and Storage Hub.",
+  "pageHomeWelcome": "Willkommen zu STASH - Dem Sample Transfer and Storage Hub.",
   "pageHomeInstructions": "Starte mit der Auswahl einer der untenstehenden Operationen.",
   "pageImportTitle": "Behältertransport",
   "pageImportText": "Auf dieser Seite können Behälter in andere Behälter transportiert werden. Dies startet normalerweise mit die Auswahl des Behälter in den sie eingefügt werden sollen. Während des Scannens werden neue Behälter auf deren Existenz überprüft. Falls sie nicht existeren, müssen sie zuerst auf der Importierseite erstellt werden.",
@@ -222,6 +224,7 @@
   "widgetContainerProject": "Projekt",
   "widgetContainerTrial": "Versuch",
   "widgetContainerSubContainerCount": "Unter-Behälter",
+  "widgetContainerAttributesTitle": "Behältereigenschaften",
   "widgetSignInText": "In Benutzerkonto anmelden",
   "widgetSignInTitle": "Anmelden"
 }

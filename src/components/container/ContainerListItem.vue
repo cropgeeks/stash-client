@@ -6,8 +6,8 @@
     <template #title>
       <span class="text-wrap">{{ container.containerBarcode }}</span>
     </template>
-    <template #subtitle v-if="container.containerDescription">
-      <span class="text-wrap">{{ container.containerDescription }}</span>
+    <template #subtitle v-if="containerDescription">
+      <span class="text-wrap">{{ containerDescription }}</span>
     </template>
     <template #append v-if="showDelete === true">
       <v-btn :icon="mdiDelete" color="error" @click="emit('delete')" />
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
   import type { ViewTableContainers } from '@/plugins/types/stash'
+  import { getContainerDescription } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { mdiDelete } from '@mdi/js'
 
@@ -27,6 +28,14 @@
     showDelete: boolean
     parentClick?: () => void
   }>()
+
+  const containerDescription = computed(() => {
+    if (compProps.container) {
+      return getContainerDescription(compProps.container)
+    } else {
+      return undefined
+    }
+  })
 
   const emit = defineEmits(['delete'])
 </script>

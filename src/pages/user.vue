@@ -4,10 +4,8 @@
     <p>{{ $t('pageUserText') }}</p>
 
     <v-btn-toggle
-      v-model="selectedUserTypes"
+      v-model="selectedUserType"
       class="mb-3"
-      multiple
-      mandatory
       variant="tonal"
       color="primary"
     >
@@ -36,7 +34,7 @@
     },
   })
 
-  const selectedUserTypes = ref<string[]>(Object.keys(userTypeConfig))
+  const selectedUserType = ref<string>()
   const userTable = useTemplateRef('userTable')
 
   function getUsers (request: PaginatedRequest) {
@@ -53,11 +51,13 @@
       copy.filters[0].filters = []
     }
 
-    copy.filters[0].filters?.push({
-      column: 'userType',
-      comparator: FilterComparator.inSet,
-      values: selectedUserTypes.value,
-    })
+    if (selectedUserType.value) {
+      copy.filters[0].filters?.push({
+        column: 'userType',
+        comparator: FilterComparator.inSet,
+        values: [selectedUserType.value],
+      })
+    }
 
     return new Promise<PaginatedResult<ViewTableUsers[]>>((resolve, reject) => {
       apiPostUserTable(copy)
@@ -66,5 +66,5 @@
     })
   }
 
-  watch(selectedUserTypes, async () => userTable.value?.refresh())
+  watch(selectedUserType, async () => userTable.value?.refresh())
 </script>

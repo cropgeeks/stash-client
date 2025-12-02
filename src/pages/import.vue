@@ -108,7 +108,7 @@
 
 <script setup lang="ts">
   import { apiGetAttributes } from '@/plugins/api/attribute'
-  import { FilterComparator, FilterOperator, UsersUserType, type ViewTableContainers, type Attributes, type ContainerAttributeValue, type ContainerTypes, type Projects, type Trials } from '@/plugins/types/stash'
+  import { FilterComparator, FilterOperator, UsersUserType, type ViewTableContainers, type Attributes, type ContainerTypes, type Projects, type Trials, type ContainerAttributeTimeline } from '@/plugins/types/stash'
   import { mdiAlert, mdiCheck, mdiClose, mdiFileDownload, mdiFormatListChecks } from '@mdi/js'
   import { tsvParse, type DSVParsedArray, type DSVRowString } from 'd3-dsv'
   import { useI18n } from 'vue-i18n'
@@ -117,7 +117,7 @@
   import { apiPostContainers, apiPostContainersToParent, apiPostContainerTable } from '@/plugins/api/container'
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
   import type { AxiosError } from 'axios'
-import ContainerInput from '@/components/input/ContainerInput.vue'
+  import ContainerInput from '@/components/input/ContainerInput.vue'
 
   definePage({
     meta: {
@@ -136,7 +136,7 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
 
   const errorMessage = ref<string>()
   const parsedData = shallowRef<DSVParsedArray<DSVRowString<string>>>()
-  const columnMapping = ref<{ [index: string]: 'barcode' | 'description' | 'attribute' | 'ignore' }>({})
+  const columnMapping = ref<{ [index: string]: 'barcode' | 'attribute' | 'ignore' }>({})
   const attributeMapping = ref<{ [index: string]: Attributes }>({})
   const inputColumns = ref<string[]>([])
 
@@ -198,9 +198,6 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
       value: 'barcode',
       title: t('formSelectOptionPredefineMappingBarcode'),
     }, {
-      value: 'description',
-      title: t('formSelectOptionPredefineMappingDescription'),
-    }, {
       value: 'attribute',
       title: t('formSelectOptionPredefineMappingAttribute'),
     }, {
@@ -243,7 +240,6 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
 
   function onSubmit () {
     const barcodeColumn = Object.keys(columnMapping.value).find(k => columnMapping.value[k] === 'barcode')
-    const descriptionColumn = Object.keys(columnMapping.value).find(k => columnMapping.value[k] === 'description')
 
     const sct = selectedContainerType.value
     if (!barcodeColumn || !sct || !parsedData.value) {
@@ -252,21 +248,27 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
 
     const mappedToAttribute = Object.keys(columnMapping.value).filter(k => columnMapping.value[k] === 'attribute')
     const mapped: ViewTableContainers[] = parsedData.value.map(d => {
-      const atts: ContainerAttributeValue[] = mappedToAttribute.map(ai => {
+      const timeline: ContainerAttributeTimeline = {
+        date: new Date().toISOString().split('T')[0],
+        attributeValues: {},
+      }
+
+      mappedToAttribute.map(ai => {
         return {
           attributeId: attributeMapping.value[ai].id,
           attributeValue: d[ai],
         }
-      }).filter(ai => ai.attributeValue !== undefined && ai.attributeValue !== '')
+      }).filter(ai => ai.attributeValue !== undefined && ai.attributeValue !== '').forEach(ai => {
+        timeline.attributeValues[ai.attributeId] = ai.attributeValue
+      })
 
       return {
         containerBarcode: d[barcodeColumn],
-        containerDescription: descriptionColumn ? d[descriptionColumn] : undefined,
         containerTypeId: sct.id || -1,
         projectId: selectedProject.value?.id,
         trialId: selectedTrial.value?.id,
         containerIsActive: true,
-        containerAttributes: atts,
+        containerAttributes: [timeline],
       }
     })
 
@@ -287,6 +289,8 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
         attributeMapping.value = {}
         inputColumns.value = []
       }
+
+      emitter.emit('update-container-attributes')
     }
 
     const errorHandler = {
@@ -302,9 +306,6 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
             break
           case 409:
             errorMessage.value = 'formErrorPredefineMappingDuplicateBarcodeDatabase'
-            break
-          case 413:
-            errorMessage.value = 'formErrorPredefineMappingBarcodeOrDescriptionTooLong'
             break
           case 417:
             errorMessage.value = 'formErrorPredefineMappingAttributeValueWrongType'
@@ -336,9 +337,6 @@ import ContainerInput from '@/components/input/ContainerInput.vue'
       switch (lower) {
         case 'barcode':
           columnMapping.value[c] = 'barcode'
-          break
-        case 'description':
-          columnMapping.value[c] = 'description'
           break
         default:
           columnMapping.value[c] = 'ignore'

@@ -33,6 +33,9 @@
     <template #item.containerIsActive="{ item }">
       <v-chip label :text="item.containerIsActive" :color="item.containerIsActive ? 'success' : 'warning'" />
     </template>
+    <template #item.containerDescription="{ item }">
+      {{ getContainerDescription(item) }}
+    </template>
   </v-data-table-server>
 
   <v-bottom-sheet
@@ -49,6 +52,7 @@
   import { MAX_JAVA_INTEGER } from '@/plugins/api/base'
   import { apiPostContainerTypeTable } from '@/plugins/api/container'
   import { type ViewTableContainers, type PaginatedRequest, type PaginatedResult, type FilterGroup, FilterComparator, FilterOperator, type ContainerTypes } from '@/plugins/types/stash'
+import { getContainerDescription } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
   import { mdiArrowRight, mdiMagnify } from '@mdi/js'
   import { useI18n } from 'vue-i18n'
@@ -87,9 +91,6 @@
       key: 'parentBarcode',
       title: t('tableColumnContainerParentBarcode'),
     }, {
-      key: 'parentDescription',
-      title: t('tableColumnContainerParentDescription'),
-    }, {
       key: 'parentContainerTypeId',
       title: t('tableColumnContainerParentType'),
     }, {
@@ -122,15 +123,11 @@
             comparator: FilterComparator.contains,
             values: [trimmed],
           }, {
-            column: 'containerDescription',
-            comparator: FilterComparator.contains,
+            column: 'containerAttributes',
+            comparator: FilterComparator.jsonSearch,
             values: [trimmed],
           }, {
             column: 'parentBarcode',
-            comparator: FilterComparator.contains,
-            values: [trimmed],
-          }, {
-            column: 'parentDescription',
             comparator: FilterComparator.contains,
             values: [trimmed],
           }, {

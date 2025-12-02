@@ -9,11 +9,22 @@
     hover
     item-value="containerId"
     @update:options="loadItems"
-  />
+  >
+    <template #item.containerDescription="{ item }">
+      {{ getContainerDescription({ containerBarcode: item.containerBarcode, containerTypeId: -1, containerAttributes: item.containerAttributes }) }}
+    </template>
+    <template #item.sourceDescription="{ item }">
+      {{ getContainerDescription({ containerBarcode: item.sourceBarcode, containerTypeId: -1, containerAttributes: item.sourceAttributes }) }}
+    </template>
+    <template #item.targetDescription="{ item }">
+      {{ getContainerDescription({ containerBarcode: item.targetBarcode, containerTypeId: -1, containerAttributes: item.targetAttributes }) }}
+    </template>
+  </v-data-table-server>
 </template>
 
 <script setup lang="ts">
   import type { ViewTableTransfers, PaginatedRequest, PaginatedResult, FilterGroup } from '@/plugins/types/stash'
+  import { getContainerDescription } from '@/plugins/util'
   import { useI18n } from 'vue-i18n'
   import type { DataTableSortItem } from 'vuetify'
 

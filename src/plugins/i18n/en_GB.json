@@ -7,6 +7,7 @@
   "buttonContainerClear": "Clear",
   "buttonContainerTransferHistory": "Show history",
   "buttonContainerContent": "Show content",
+  "buttonContainerAttributes": "Attributes",
   "buttonImport": "Import",
   "buttonLoad": "Load data",
   "buttonMakeTransfer": "Make transfer",
@@ -110,6 +111,7 @@
   "modalTitleContainerContent": "Container content",
   "modalTextContainerContent": "The table below shows all items currently stored in this container.",
   "modalTitleContainerHistory": "Transfer history",
+  "modalTitleContainerAttributes": "Container attributes",
   "modalTitleAddContainerTypes": "Add container type",
   "modalTitleAddProject": "Add project",
   "modalTitleAddTrial": "Add trial",
@@ -138,7 +140,7 @@
   "pageHomeCardSearchSubtitle": "Search for any container to quickly see information about it.",
   "pageHomeCardPredefineTitle": "Import new containers",
   "pageHomeCardPredefineSubtitle": "Prepare containers before they get scanned/entered into the system.",
-  "pageHomeWelcome": "Welcome to STASH - The Seed Transfer and Storage Hub.",
+  "pageHomeWelcome": "Welcome to STASH - The Sample Transfer and Storage Hub.",
   "pageHomeInstructions": "Start by selecting one of the operations below.",
   "pageImportTitle": "Container move",
   "pageImportText": "This page is used to move containers to another container. This usually starts with selecting the container they should go into. While you're scanning containers, they will be checked against the database. If they don't exist, you will have to create them on the import page first.",
@@ -221,6 +223,7 @@
   "widgetContainerProject": "Project",
   "widgetContainerTrial": "Trial",
   "widgetContainerSubContainerCount": "Sub-containers",
+  "widgetContainerAttributesTitle": "Container attributes",
   "widgetSignInText": "Sign in to your account",
   "widgetSignInTitle": "Sign in"
 }

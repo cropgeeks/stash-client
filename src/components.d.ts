@@ -9,6 +9,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ConfirmModal: typeof import('./components/modal/ConfirmModal.vue')['default']
+    ContainerAttributeCard: typeof import('./components/container/ContainerAttributeCard.vue')['default']
+    ContainerAttributeModal: typeof import('./components/modal/ContainerAttributeModal.vue')['default']
     ContainerCard: typeof import('./components/container/ContainerCard.vue')['default']
     ContainerHistoryModal: typeof import('./components/modal/ContainerHistoryModal.vue')['default']
     ContainerInput: typeof import('./components/input/ContainerInput.vue')['default']

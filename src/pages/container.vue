@@ -1,10 +1,8 @@
 <template>
   <v-container>
     <v-btn-toggle
-      v-model="selectedContainerTypes"
+      v-model="selectedContainerType"
       class="mb-3"
-      multiple
-      mandatory
       variant="tonal"
       color="primary"
     >
@@ -31,7 +29,7 @@
 
   const containerTable = useTemplateRef('containerTable')
 
-  const selectedContainerTypes = ref<number[]>(store.containerTypes.filter(t => t.id).map(t => t.id || -1))
+  const selectedContainerType = ref<number>()
 
   function getContainers (request: PaginatedRequest) {
     const copy: PaginatedRequest = JSON.parse(JSON.stringify(request))
@@ -47,11 +45,13 @@
       copy.filters[0].filters = []
     }
 
-    copy.filters[0].filters?.push({
-      column: 'containerTypeId',
-      comparator: FilterComparator.inSet,
-      values: selectedContainerTypes.value.map(c => `${c}`),
-    })
+    if (selectedContainerType.value) {
+      copy.filters[0].filters?.push({
+        column: 'containerTypeId',
+        comparator: FilterComparator.inSet,
+        values: [`${selectedContainerType.value}`],
+      })
+    }
 
     return new Promise<PaginatedResult<ViewTableContainers[]>>((resolve, reject) => {
       apiPostContainerTable(copy)
@@ -60,5 +60,5 @@
     })
   }
 
-  watch(selectedContainerTypes, async () => containerTable.value?.refresh())
+  watch(selectedContainerType, async () => containerTable.value?.refresh())
 </script>

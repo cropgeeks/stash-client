@@ -6,8 +6,8 @@
         <ContainerTypeChip v-if="container.containerId" color="primary" :container-type="{ name: store.storeContainerTypeMap[container.containerTypeId].name, icon: store.storeContainerTypeMap[container.containerTypeId].icon, description: store.storeContainerTypeMap[container.containerTypeId].description }" />
       </div>
     </template>
-    <template #subtitle v-if="container.containerDescription">
-      <span class="text-wrap">{{ container.containerDescription }}</span>
+    <template #subtitle v-if="containerDescription">
+      <span class="text-wrap">{{ containerDescription }}</span>
     </template>
 
     <template #text v-if="container.containerId">
@@ -36,6 +36,7 @@
 
     <template #actions v-if="container.containerId">
       <v-spacer />
+      <v-btn :text="$t('buttonContainerAttributes')" :prepend-icon="mdiTagText" variant="tonal" @click="containerAttributeModal?.show()" v-if="container.containerAttributes && container.containerAttributes.length > 0" />
       <v-btn :text="$t('buttonContainerTransferHistory')" :prepend-icon="mdiHistory" variant="tonal" @click="containerHistoryModal?.show()" />
       <v-btn :text="$t('buttonContainerContent')" :disabled="(container.subContainerCount || 0) === 0" :prepend-icon="mdiFileTree" variant="tonal" @click="containerTableModal?.show()" />
       <v-btn :text="$t('buttonContainerClear')" :disabled="(container.subContainerCount || 0) === 0" :prepend-icon="mdiCancel" variant="tonal" color="error" v-if="store.storeUserIsAdmin && showClear" @click="clearContainer" />
@@ -43,14 +44,16 @@
 
     <ContainerTableModal :container="container" ref="containerTableModal" />
     <ContainerHistoryModal :container="container" ref="containerHistoryModal" />
+    <ContainerAttributeModal :container="container" ref="containerAttributeModal" />
   </v-card>
 </template>
 
 <script setup lang="ts">
   import { apiGetContainerClear, apiPostContainerTable } from '@/plugins/api/container'
   import { FilterComparator, FilterOperator, type ViewTableContainers } from '@/plugins/types/stash'
+  import { getContainerDescription } from '@/plugins/util'
   import { coreStore } from '@/stores/app'
-  import { mdiCancel, mdiCheckboxMarkedOutline, mdiFileTree, mdiHistory, mdiLandFields, mdiNotebook, mdiPackageUp } from '@mdi/js'
+  import { mdiCancel, mdiCheckboxMarkedOutline, mdiFileTree, mdiHistory, mdiLandFields, mdiNotebook, mdiPackageUp, mdiTagText } from '@mdi/js'
 
   import emitter from 'tiny-emitter/instance'
   import { useI18n } from 'vue-i18n'
@@ -72,13 +75,21 @@
 
   const containerTableModal = useTemplateRef('containerTableModal')
   const containerHistoryModal = useTemplateRef('containerHistoryModal')
+  const containerAttributeModal = useTemplateRef('containerAttributeModal')
+
+  const containerDescription = computed(() => {
+    if (container.value) {
+      return getContainerDescription(container.value)
+    } else {
+      return undefined
+    }
+  })
 
   const parentContainer: ComputedRef<ViewTableContainers | undefined> = computed(() => {
     if (container.value && container.value.parentId) {
       return {
         containerId: container.value.parentId,
         containerTypeId: container.value.parentContainerTypeId || -1,
-        containerDescription: container.value.parentDescription,
         containerBarcode: container.value.parentBarcode || '',
       }
     } else {

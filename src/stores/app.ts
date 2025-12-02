@@ -1,6 +1,6 @@
 // Utilities
 import { userIsAtLeast } from '@/plugins/api/auth'
-import { UsersUserType, type ContainerTypes, type Token } from '@/plugins/types/stash'
+import { UsersUserType, type Attributes, type ContainerTypes, type Token } from '@/plugins/types/stash'
 import { defineStore } from 'pinia'
 
 let name = import.meta.env.VUE_APP_INSTANCE_NAME
@@ -44,6 +44,7 @@ export const coreStore = defineStore('core', {
     token: undefined as Token | undefined,
     serverUrl: null as (string | null),
     containerTypes: [] as ContainerTypes[],
+    containerAttributes: [] as Attributes[],
   }),
   getters: {
     storeUserIsAdmin: (state): boolean => {
@@ -79,6 +80,16 @@ export const coreStore = defineStore('core', {
 
       return result
     },
+    storeContainerAttributes: (state): Attributes[] => state.containerAttributes || [],
+    storeContainerAttributeMap: (state): { [index: number]: Attributes } => {
+      const result: { [index: number]: Attributes } = {}
+
+      state.containerAttributes.forEach(ct => {
+        result[ct.id || -1] = ct
+      })
+
+      return result
+    },
     storeLocale: (state): string => (state.locale || 'en-GB').replace('_', '-'),
     storePlausible: (state): PlausibleConfig => state.plausible,
     storeTheme (): string {
@@ -101,6 +112,9 @@ export const coreStore = defineStore('core', {
     },
     setContainerTypes (newContainerTypes: ContainerTypes[]) {
       this.containerTypes = newContainerTypes
+    },
+    setContainerAttributes (newContainerAttributes: Attributes[]) {
+      this.containerAttributes = newContainerAttributes
     },
     setPlausible (newPlausible: PlausibleConfig) {
       this.plausible = newPlausible
