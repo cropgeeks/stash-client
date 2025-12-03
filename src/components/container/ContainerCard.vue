@@ -44,7 +44,7 @@
 
     <ContainerTableModal :container="container" ref="containerTableModal" />
     <ContainerHistoryModal :container="container" ref="containerHistoryModal" />
-    <ContainerAttributeModal :container="container" ref="containerAttributeModal" />
+    <ContainerAttributeModal :container="container" ref="containerAttributeModal" @reload-container="refresh" />
   </v-card>
 </template>
 

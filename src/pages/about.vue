@@ -10,14 +10,14 @@
           <p class="text-subtitle-1 my-3">{{ $t('pageHomeInstructions') }}</p>
         </v-card-text>
         <v-img
-          class="ma-3"
+          class="ma-3 flex-grow-0"
           height="200"
           min-width="230"
           src="/img/stash-w-text-shapes-dark.svg"
           v-if="store.storeIsDarkMode"
         />
         <v-img
-          class="ma-3"
+          class="ma-3 flex-grow-0"
           height="200"
           min-width="230"
           src="/img/stash-w-text-shapes.svg"

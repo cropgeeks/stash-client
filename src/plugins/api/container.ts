@@ -49,9 +49,19 @@ function apiGetContainerAttributes (containerId: number, onSuccess?: ResponseHan
   return apiAxios({ url: `container/${containerId}/attribute`, method: 'GET', data: undefined, success: onSuccess, error: onError })
 }
 
+function apiPostContainerAttributes (containerId: number, data: ContainerAttributes, onSuccess?: ResponseHandler<void>, onError?: ErrorHandler) {
+  return apiAxios({ url: `container/${containerId}/attribute`, method: 'POST', data, success: onSuccess, error: onError })
+}
+
+function apiDeletePostContainerAttributes (containerId: number, containerAttributeValueId: number, onSuccess?: ResponseHandler<void>, onError?: ErrorHandler) {
+  return apiAxios({ url: `container/${containerId}/attribute/${containerAttributeValueId}`, method: 'DELETE', data: undefined, success: onSuccess, error: onError })
+}
+
 export {
   apiPostContainers,
   apiGetContainerAttributes,
+  apiPostContainerAttributes,
+  apiDeletePostContainerAttributes,
   apiPostContainersToParent,
   apiPostContainerTable,
   apiPostContainerTransfer,

@@ -82,12 +82,14 @@
     scanInBottomSheet?: boolean
     onlyAllowMatches?: boolean
     autoFocus?: boolean
+    ttsIncludeDescription?: boolean
   }
 
   const compProps = withDefaults(defineProps<ContainerSearchProps>(), {
     scanInBottomSheet: false,
     onlyAllowMatches: true,
     autoFocus: true,
+    ttsIncludeDescription: false,
   })
 
   function selectItem (item: ViewTableContainers) {
@@ -188,7 +190,16 @@
       containerSearch.value = undefined
     } else {
       if (!oldValue || oldValue.containerBarcode !== newValue.containerBarcode) {
-        emitter.emit('tts', newValue.containerBarcode)
+        let text = newValue.containerBarcode
+        if (compProps.ttsIncludeDescription) {
+          const description = getContainerDescription(newValue)
+
+          if (description && description.trim().length > 0) {
+            text += '; ' + description
+          }
+        }
+
+        emitter.emit('tts', text)
       }
       containerSearch.value = newValue.containerBarcode
     }

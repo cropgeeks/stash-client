@@ -29,6 +29,17 @@
               v-if="config.type === 'text'"
             />
             <!-- @vue-ignore -->
+            <v-number-input
+              v-model="formModel[config.key]"
+              :label="$t(config.title)"
+              :hide-details="config.hint === undefined"
+              :hint="config.hint ? $t(config.hint) : undefined"
+              :persistent-hint="config.hint !== undefined"
+              :required="config.required"
+              :autofocus="config.autofocus"
+              v-else-if="config.type === 'number'"
+            />
+            <!-- @vue-ignore -->
             <v-text-field
               v-model="formModel[config.key]"
               :append-inner-icon="dataVisibilityFlag[index] ? mdiEyeOff : mdiEye"

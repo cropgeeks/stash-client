@@ -10,13 +10,15 @@ export interface Attributes {
     updatedOn: Date;
 }
 
-export interface ContainerAttributes extends Serializable {
-    id: number;
+export interface ContainerAttributes {
+    id?: number;
     containerId: number;
-    attributeValues: { [index: string]: string };
-    createdOn: Date;
-    updatedOn: Date;
+    attributeValues: ContainerAttributeValues;
+    createdOn?: Date;
+    updatedOn?: Date;
 }
+
+export type ContainerAttributeValues = { [index: string]: string }
 
 export interface ContainerTypes {
     id?: number;
